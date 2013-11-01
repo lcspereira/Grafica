@@ -2,6 +2,7 @@ package Grafica::Controller::Pedidos;
 use Moose;
 use namespace::autoclean;
 use Try::Tiny;
+use HTML::FormHandler;
 use feature qw(switch);
 
 
@@ -60,10 +61,34 @@ sub index :Path :Args(0) {
 
 =head2 cadastrar
 
+Cadastra ou atualiza pedido no banco de dados.
+
 =cut
 
-sub cadastrar :Path("/cadastrar") :Args(0) {
+sub cadastrar :Path("/cadastrar") :Args(1) {
+    my ( $self, $c ) = @_;
+    my $pedido;
+    my @clientes;
+    my $form;
 
+    try {
+        if (defined ($c->req->params)) {
+            $pedido = $c->model(__PACKAGE__->config->{'pedido'})->find ({ id => $c->req->params->{'id'}});
+        } else {
+           $pedido = $c->model(__PACKAGE__->config->{'pedido'})->new;
+        }
+        foreach my $cliente ($c->model(__PACKAGE__->config->{'cliente'})->search ()) {
+            push (@clientes, $cliente->nome);
+        }
+        $form = HTML::FormHandler->new (
+            name       => 'pedido',
+            field_list => [ 
+                cliente => {
+                    Type    => 'Select',
+                    options => \@clientes,
+                    m
+    } catch {
+    };
 }
 
 =head2 excluir
@@ -71,7 +96,7 @@ sub cadastrar :Path("/cadastrar") :Args(0) {
 =cut
 
 sub excluir :Path :Args(0) {
-  
+    my ( $self, $c ) = @_;
 }
 
 =head2 index
@@ -79,14 +104,14 @@ sub excluir :Path :Args(0) {
 =cut
 
 sub detalhes :Path :Args(0) {
-
+    my ( $self, $c ) = @_;
 }
 
 =encoding utf8
 
 =head1 AUTHOR
 
-Lucas Pereira,,,
+Lucas Pereira,
 
 =head1 LICENSE
 

@@ -55,9 +55,32 @@ sub index :Path :Args(0) {
                 die ($err);
             }
         };
-    }
+    };
 }
 
+=head2 cadastrar
+
+=cut
+
+sub cadastrar :Path("/cadastrar") :Args(0) {
+
+}
+
+=head2 excluir
+
+=cut
+
+sub excluir :Path :Args(0) {
+  
+}
+
+=head2 index
+
+=cut
+
+sub detalhes :Path :Args(0) {
+
+}
 
 =encoding utf8
 
