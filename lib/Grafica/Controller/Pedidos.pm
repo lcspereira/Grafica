@@ -75,18 +75,64 @@ sub cadastrar :Path("/cadastrar") :Args(1) {
         if (defined ($c->req->params)) {
             $pedido = $c->model(__PACKAGE__->config->{'pedido'})->find ({ id => $c->req->params->{'id'}});
         } else {
-           $pedido = $c->model(__PACKAGE__->config->{'pedido'})->new;
+            $pedido = $c->model(__PACKAGE__->config->{'pedido'})->new;
         }
         foreach my $cliente ($c->model(__PACKAGE__->config->{'cliente'})->search ()) {
             push (@clientes, $cliente->nome);
         }
         $form = HTML::FormHandler->new (
             name       => 'pedido',
+        # ========================================================
+        # Formulário de pedidos
+        # ========================================================
             field_list => [ 
-                cliente => {
-                    Type    => 'Select',
-                    options => \@clientes,
+                # --------------------------------
+                # Cliente
+                # --------------------------------
+                cliente        => {
+                    Type              => 'Select',
+                    label             => 'Cliente:',
+                    options           => \@clientes,
+                    multiple          => 0,
+                    size              => 5,
+                    required          => 1,
+                    required_message  => 'Por favor, selecione o cliente.'
+                }, 
+                # --------------------------------
+                
+                # --------------------------------
+                # Data de entrega
+                # --------------------------------
+                data_entrega   => {
+                    Type              => 'Date',
+                    label             => 'Data de entrega:',
+                    required          => 1,
+                    required_message  => 'Por favor, informe a data de entrega.',
+                },
+                # --------------------------------
+
+                # --------------------------------
+                # Subtotal
+                # --------------------------------
+                subtotal       => {},
+                # --------------------------------
+                
+
+                # --------------------------------
+                # Desconto
+                # --------------------------------
+                desconto       => {},
+                # --------------------------------
+                
+
+                # --------------------------------
+                # Total
+                # --------------------------------
+                total          => {},
+                # --------------------------------
+            ]
                     
+        # ========================================================
     } catch {
     };
 }
