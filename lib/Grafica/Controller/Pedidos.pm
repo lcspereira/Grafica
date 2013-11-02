@@ -86,7 +86,7 @@ sub cadastrar :Path("/cadastrar") :Args(1) {
                 cliente => {
                     Type    => 'Select',
                     options => \@clientes,
-                    m
+                    
     } catch {
     };
 }
