@@ -2,9 +2,15 @@ package Grafica::Controller::Pedidos;
 use Moose;
 use namespace::autoclean;
 use Try::Tiny;
-use HTML::FormHandler;
+use Grafica::DB::Result::PedidoForm;
 use feature qw(switch);
 
+has 'pedidoForm' => (
+    isa     => 'Grafica::DB::Result::PedidoForm',
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { Grafica::DB::Result::PedidoForm->new }
+);
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -59,93 +65,35 @@ sub index :Path :Args(0) {
     };
 }
 
-=head2 cadastrar
+=head2 editar
 
 Cadastra ou atualiza pedido no banco de dados.
 
 =cut
 
-sub cadastrar :Path("/cadastrar") :Args(1) {
+sub editar :Path("/editar") :Args(1) {
     my ( $self, $c ) = @_;
     my $pedido;
     my @clientes;
-    my $form;
-
-    try {
-        if (defined ($c->req->params)) {
-            $pedido = $c->model(__PACKAGE__->config->{'pedido'})->find ({ id => $c->req->params->{'id'}});
-        } else {
-            $pedido = $c->model(__PACKAGE__->config->{'pedido'})->new;
-        }
-        foreach my $cliente ($c->model(__PACKAGE__->config->{'cliente'})->search ()) {
-            push (@clientes, $cliente->nome);
-        }
-        $form = HTML::FormHandler->new (
-            name       => 'pedido',
-        # ========================================================
-        # Formulário de pedidos
-        # ========================================================
-            field_list => [ 
-                # --------------------------------
-                # Cliente
-                # --------------------------------
-                cliente        => {
-                    Type              => 'Select',
-                    label             => 'Cliente:',
-                    options           => \@clientes,
-                    multiple          => 0,
-                    size              => 5,
-                    required          => 1,
-                    required_message  => 'Por favor, selecione o cliente.'
-                }, 
-                # --------------------------------
-                
-                # --------------------------------
-                # Data de entrega
-                # --------------------------------
-                data_entrega   => {
-                    Type              => 'Date',
-                    label             => 'Data de entrega:',
-                    required          => 1,
-                    required_message  => 'Por favor, informe a data de entrega.',
-                },
-                # --------------------------------
-
-                # --------------------------------
-                # Subtotal
-                # --------------------------------
-                subtotal       => {},
-                # --------------------------------
-                
-
-                # --------------------------------
-                # Desconto
-                # --------------------------------
-                desconto       => {},
-                # --------------------------------
-                
-
-                # --------------------------------
-                # Total
-                # --------------------------------
-                total          => {},
-                # --------------------------------
-            ]
-                    
-        # ========================================================
-    } catch {
-    };
+    my $form = $self->pedidoForm->run (
+        params => $c->req->params,
+        #action =>
+    );
+    $c->stash (
+        form => $form,
+    );
+    return unless $form->validated ();
 }
 
-=head2 excluir
+=head2 cancelarPedido
 
 =cut
 
-sub excluir :Path :Args(0) {
+sub cancelarPedido :Path("/cancelar") :Args(0) {
     my ( $self, $c ) = @_;
 }
 
-=head2 index
+=head2 detalhes
 
 =cut
 

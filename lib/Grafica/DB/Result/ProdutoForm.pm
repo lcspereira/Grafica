@@ -6,15 +6,30 @@
     use HTML::FormHandler::Moose;
     extends 'HTML::FormHandler::Model::DBIC';
     use namespace::autoclean;
+    with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
 
-    has '+item_class' => ( default => 'Grafica::DB::Result::Produto' );
+    has '+item_class'            => ( 
+        default => 'Grafica::DB::Result::Produto' 
+    );
 
-    has_field 'quant' => ( type => 'Text', );
-    has_field 'preco' => ( type => 'TextArea', required => 1, );
-    has_field 'descr' => ( type => 'TextArea', required => 1, );
-    has_field 'pedido_produtoes' => ( type => '+PedidoProdutoField', );
-    has_field 'submit' => ( widget => 'Submit', );
+    has_field 'quant'            => ( 
+        type => 'Text', 
+    );
+    has_field 'preco'            => ( 
+        type     => 'TextArea', 
+        required => 1, 
+    );
+    has_field 'descr'            => ( 
+        type     => 'TextArea', 
+        required => 1, 
+    );
+    has_field 'pedido_produtoes' => ( 
+        type => '+PedidoProdutoField', 
+    );
+    has_field 'submit'           => ( 
+        widget => 'Submit', 
+    );
 
     __PACKAGE__->meta->make_immutable;
     no HTML::FormHandler::Moose;
@@ -26,10 +41,18 @@
     use HTML::FormHandler::Moose;
     extends 'HTML::FormHandler::Field::Compound';
     use namespace::autoclean;
+    with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
-    has_field 'quant' => ( type => 'Text', required => 1, );
-    has_field 'id_produto' => ( type => 'Select', );
-    has_field 'pedido' => ( type => 'Select', );
+    has_field 'quant'      => ( 
+        type     => 'Text', 
+        required => 1, 
+    );
+    has_field 'id_produto' => ( 
+        type => 'Select', 
+    );
+    has_field 'pedido'     => ( 
+        type => 'Select', 
+    );
     
     __PACKAGE__->meta->make_immutable;
     no HTML::FormHandler::Moose;
