@@ -8,70 +8,47 @@
     use namespace::autoclean;
     with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
-    has '+widget_wrapper' => ( default => 'Bootstrap' ); 
+    has '+widget_wrapper'        => ( 
+        default => 'Bootstrap' 
+    ); 
 
-    has '+item_class' => ( 
+    has '+item_class'            => ( 
         default => 'Grafica::DB::Result::Pedido' 
     );
 
-    has_field 'total'            => ( 
-        type     => 'TextArea', 
-        required => 1, 
-    );
-    has_field 'desconto'         => ( 
-        type => 'TextArea', 
-    );
-    has_field 'subtotal'         => ( 
-        type     => 'TextArea', 
-        required => 1, 
-    );
     has_field 'data_entrega'     => ( 
-        type     => 'Text', 
-        required => 1, 
+        label            => 'Data de entrega: ',
+        type             => 'Date', 
+        required         => 1, 
+        required_message => 'Por favor, informe a data de entrega.'
     );
-    has_field 'data_encomenda'   => ( 
-        type     => 'Text', 
-        required => 1, 
+    
+    has_field 'subtotal'         => ( 
+        label    => 'Subtotal: '
+        type     => 'Float', 
+        required => 1,
+        value    => 0,
     );
-    has_field 'id_cliente'       => ( 
-        type => 'Select', 
+
+    has_field 'desconto'         => ( 
+        label => 'Desconto: ',
+        type  => 'Float',
+        value => 0,
+    );  
+    
+    has_field 'total'            => (
+        label    => 'Total: '
+        type     => 'Float', 
+        required => 1,
+        value    => 0,
     );
-    has_field 'status'           => ( 
-        type => 'Select', 
-    );
-    has_field 'pedido_produtoes' => ( 
-        type => '+PedidoProdutoField', 
-    );
+
     has_field 'submit'           => ( 
+        label  => 'Incluir: '
         widget => 'Submit', 
     );
 
-    #__PACKAGE__->meta->make_immutable;
     no HTML::FormHandler::Moose;
     1;
 }
-
-
-{
-    package PedidoProdutoField;
-    use HTML::FormHandler::Moose;
-    extends 'HTML::FormHandler::Field::Compound';
-    use namespace::autoclean;
-
-    has_field 'quant'      => ( 
-        type     => 'Text', 
-        required => 1, 
-    );
-    has_field 'id_produto' => ( 
-        type => 'Select', 
-    );
-    has_field 'pedido'     => ( 
-        type => 'Select', 
-    );
-    
-    #__PACKAGE__->meta->make_immutable;
-    no HTML::FormHandler::Moose;
-    1;
-}
-
 

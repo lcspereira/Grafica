@@ -6,58 +6,43 @@
     use HTML::FormHandler::Moose;
     extends 'HTML::FormHandler::Model::DBIC';
     use namespace::autoclean;
-    #with 'HTML::FormHandler::Widget::Theme::Bootstrap';
+    with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
+    has '+widget_wrapper'        => ( 
+        default => 'Bootstrap' 
+    ); 
 
     has '+item_class'            => ( 
         default => 'Grafica::DB::Result::Produto' 
     );
+    
+    has_field 'descr'            => (
+        label            => 'Descrição: ',
+        type             => 'TextArea', 
+        required         => 1,
+        message_required => 'Por favor, digite uma breve descrição do produto',
+    );
 
     has_field 'quant'            => ( 
-        type => 'Text', 
+        label            => 'Quantidade: ',
+        type             => 'Float', 
+        required         => 1,
+        message_required => 'Por favor, informe a quantidade do produto'
     );
-    has_field 'preco'            => ( 
-        type     => 'TextArea', 
-        required => 1, 
+
+    has_field 'preco'            => (
+        label            => 'Preço: ',
+        type             => 'Float', 
+        required         => 1,
+        message_required => 'Por favor, informe o preço do produto.'
     );
-    has_field 'descr'            => ( 
-        type     => 'TextArea', 
-        required => 1, 
-    );
-    has_field 'pedido_produtoes' => ( 
-        type => '+PedidoProdutoField', 
-    );
+    
     has_field 'submit'           => ( 
+        label  => 'Cadastrar',
         widget => 'Submit', 
     );
 
-    #__PACKAGE__->meta->make_immutable;
     no HTML::FormHandler::Moose;
     1;
 }
-
-
-{
-    package PedidoProdutoField;
-    use HTML::FormHandler::Moose;
-    extends 'HTML::FormHandler::Field::Compound';
-    use namespace::autoclean;
-    #with 'HTML::FormHandler::Widget::Theme::Bootstrap';
-
-    has_field 'quant'      => ( 
-        type     => 'Text', 
-        required => 1, 
-    );
-    has_field 'id_produto' => ( 
-        type => 'Select', 
-    );
-    has_field 'pedido'     => ( 
-        type => 'Select', 
-    );
-    
-    #__PACKAGE__->meta->make_immutable;
-    no HTML::FormHandler::Moose;
-    1;
-}
-
 
