@@ -2,11 +2,11 @@
 # Using following commandline:
 # form_generator.pl --rs_name=Grafica::DB::Result::Produto --schema_name=Grafica::DB --db_dsn=dbi:Pg:dbname=grafica
 {
-    package Grafica::DB::Result::ProdutoForm;
+    package Grafica::Form::Produto;
     use HTML::FormHandler::Moose;
     extends 'HTML::FormHandler::Model::DBIC';
     use namespace::autoclean;
-    with 'HTML::FormHandler::Widget::Theme::Bootstrap';
+    #with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
 
     has '+item_class'            => ( 
@@ -31,8 +31,9 @@
         widget => 'Submit', 
     );
 
-    __PACKAGE__->meta->make_immutable;
+    #__PACKAGE__->meta->make_immutable;
     no HTML::FormHandler::Moose;
+    1;
 }
 
 
@@ -41,7 +42,7 @@
     use HTML::FormHandler::Moose;
     extends 'HTML::FormHandler::Field::Compound';
     use namespace::autoclean;
-    with 'HTML::FormHandler::Widget::Theme::Bootstrap';
+    #with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
     has_field 'quant'      => ( 
         type     => 'Text', 
@@ -54,8 +55,9 @@
         type => 'Select', 
     );
     
-    __PACKAGE__->meta->make_immutable;
+    #__PACKAGE__->meta->make_immutable;
     no HTML::FormHandler::Moose;
+    1;
 }
 
 

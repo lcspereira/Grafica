@@ -2,12 +2,13 @@
 # Using following commandline:
 # form_generator.pl --rs_name=Grafica::DB::Result::Pedido --schema_name=Grafica::DB --db_dsn=dbi:Pg:dbname=grafica
 {
-    package Grafica::DB::Result::PedidoForm;
+    package Grafica::Form::Pedido;
     use HTML::FormHandler::Moose;
     extends 'HTML::FormHandler::Model::DBIC';
     use namespace::autoclean;
     with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
+    has '+widget_wrapper' => ( default => 'Bootstrap' ); 
 
     has '+item_class' => ( 
         default => 'Grafica::DB::Result::Pedido' 
@@ -45,8 +46,9 @@
         widget => 'Submit', 
     );
 
-    __PACKAGE__->meta->make_immutable;
+    #__PACKAGE__->meta->make_immutable;
     no HTML::FormHandler::Moose;
+    1;
 }
 
 
@@ -55,7 +57,6 @@
     use HTML::FormHandler::Moose;
     extends 'HTML::FormHandler::Field::Compound';
     use namespace::autoclean;
-    with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
     has_field 'quant'      => ( 
         type     => 'Text', 
@@ -68,8 +69,9 @@
         type => 'Select', 
     );
     
-    __PACKAGE__->meta->make_immutable;
+    #__PACKAGE__->meta->make_immutable;
     no HTML::FormHandler::Moose;
+    1;
 }
 
 

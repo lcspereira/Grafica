@@ -2,14 +2,14 @@ package Grafica::Controller::Pedidos;
 use Moose;
 use namespace::autoclean;
 use Try::Tiny;
-use Grafica::DB::Result::PedidoForm;
+use Grafica::Form::Pedido;
 use feature qw(switch);
 
 has 'pedidoForm' => (
-    isa     => 'Grafica::DB::Result::PedidoForm',
+    isa     => 'Grafica::Form::Pedido',
     is      => 'rw',
     lazy    => 1,
-    default => sub { Grafica::DB::Result::PedidoForm->new }
+    default => sub { Grafica::Form::Pedido->new }
 );
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -71,7 +71,7 @@ Cadastra ou atualiza pedido no banco de dados.
 
 =cut
 
-sub editar :Path("/editar") :Args(1) {
+sub editar :Local :CaptureArgs(1){
     my ( $self, $c ) = @_;
     my $pedido;
     my @clientes;
@@ -82,7 +82,7 @@ sub editar :Path("/editar") :Args(1) {
     $c->stash (
         form => $form,
     );
-    return unless $form->validated ();
+    #return unless $form->validated ();
 }
 
 =head2 cancelarPedido
@@ -97,7 +97,7 @@ sub cancelarPedido :Path("/cancelar") :Args(0) {
 
 =cut
 
-sub detalhes :Path :Args(0) {
+sub detalhes :Path("/detalhes") :Args(0) {
     my ( $self, $c ) = @_;
 }
 
