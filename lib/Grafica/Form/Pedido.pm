@@ -8,42 +8,48 @@
     use namespace::autoclean;
     with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
-    has '+widget_wrapper'        => ( 
+    has '+widget_wrapper'    => ( 
         default => 'Bootstrap' 
     ); 
 
-    has '+item_class'            => ( 
+    has '+item_class'        => ( 
         default => 'Grafica::DB::Result::Pedido' 
     );
 
-    has_field 'data_entrega'     => ( 
+    has_field 'cliente'      => (
+        label    => 'Cliente: ',
+        type     => 'Select',
+        required => 1,
+    );
+
+    has_field 'data_entrega' => ( 
         label            => 'Data de entrega: ',
         type             => 'Date', 
         required         => 1, 
         required_message => 'Por favor, informe a data de entrega.'
     );
     
-    has_field 'subtotal'         => ( 
+    has_field 'subtotal'     => ( 
         label    => 'Subtotal: '
         type     => 'Float', 
         required => 1,
         value    => 0,
     );
 
-    has_field 'desconto'         => ( 
+    has_field 'desconto'     => ( 
         label => 'Desconto: ',
         type  => 'Float',
         value => 0,
     );  
     
-    has_field 'total'            => (
+    has_field 'total'        => (
         label    => 'Total: '
         type     => 'Float', 
         required => 1,
         value    => 0,
     );
 
-    has_field 'submit'           => ( 
+    has_field 'submit'       => ( 
         label  => 'Incluir: '
         widget => 'Submit', 
     );

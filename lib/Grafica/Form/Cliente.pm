@@ -8,11 +8,11 @@
     use namespace::autoclean;
     with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
-    has '+widget_wrapper'        => ( 
+    has '+widget_wrapper'      => ( 
         default => 'Bootstrap' 
     ); 
 
-    has '+item_class' => ( 
+    has '+item_class'          => ( 
         default => 'Grafica::DB::Result::Cliente' 
     );
     
