@@ -30,7 +30,7 @@
     );
     
     has_field 'subtotal'     => ( 
-        label    => 'Subtotal: '
+        label    => 'Subtotal: ',
         type     => 'Float', 
         required => 1,
         value    => 0,
@@ -43,15 +43,15 @@
     );  
     
     has_field 'total'        => (
-        label    => 'Total: '
+        label    => 'Total: ',
         type     => 'Float', 
         required => 1,
         value    => 0,
     );
 
     has_field 'submit'       => ( 
-        label  => 'Incluir: '
         widget => 'Submit', 
+        label  => 'Incluir',
     );
 
     no HTML::FormHandler::Moose;

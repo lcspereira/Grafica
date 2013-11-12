@@ -52,8 +52,8 @@ sub index :Path :Args(0) {
         my $err = $_;
         given ($err) {
             when (/Can't\ call\ method\ "meta"\ on\ an\ undefined\ value/) {
-                # Caso não consiga carregar os dados da base, não exibe
-                # a tabela.
+                # Caso não consiga carregar os dados da base, 
+                # não exibe a tabela.
                 $c->stash (
                     no_pedidos   => 1
                 );
@@ -67,7 +67,7 @@ sub index :Path :Args(0) {
 
 =head2 editar
 
-Cadastra ou atualiza pedido no banco de dados.
+Carrega formulário de pedido.
 
 =cut
 
@@ -75,21 +75,30 @@ sub editar :Local :CaptureArgs(1){
     my ( $self, $c ) = @_;
     my $pedido;
     my @clientes;
+    $c->stash (
+        current_view => 'TT',
+        template     => 'pedidos/editar.tt2'
+    );
+
     my $form = $self->pedidoForm->run (
-        params => $c->req->params,
-        #action =>
+        action => 'incluir',
+        name   => 'pedidoForm',
     );
     $c->stash (
         form => $form,
     );
-    #return unless $form->validated ();
+    $form->process (params => $c->req->params) if ($c->req->method eq 'POST');
+    return unless $form->validated;
+    $c->stash (
+        form_values => $form->fif
+    );
 }
 
-=head2 cancelarPedido
+=head2 cancelar
 
 =cut
 
-sub cancelarPedido :Path("/cancelar") :Args(0) {
+sub cancelar :Local :Args(0) {
     my ( $self, $c ) = @_;
 }
 
@@ -97,7 +106,7 @@ sub cancelarPedido :Path("/cancelar") :Args(0) {
 
 =cut
 
-sub detalhes :Path("/detalhes") :Args(0) {
+sub detalhes :Local :Args(0) {
     my ( $self, $c ) = @_;
 }
 

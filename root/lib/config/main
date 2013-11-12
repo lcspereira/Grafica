@@ -12,7 +12,7 @@
 
    # define a data structure to hold sitewide data
    site = {
-     title     => 'Tecnicopias Gráfica e Editora LTDA',
+     title     => 'Teste',
      copyright => '2013 Lucas Pereira',
    };
 
