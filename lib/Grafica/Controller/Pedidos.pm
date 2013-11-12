@@ -75,6 +75,7 @@ sub editar :Local :CaptureArgs(1){
     my ( $self, $c ) = @_;
     my $pedido;
     my @clientes;
+    my $validate;
     $c->stash (
         current_view => 'TT',
         template     => 'pedidos/editar.tt2'
@@ -87,11 +88,15 @@ sub editar :Local :CaptureArgs(1){
     $c->stash (
         form => $form,
     );
-    $form->process (params => $c->req->params) if ($c->req->method eq 'POST');
+
+    $validate = $form->process ($c->req);
     return unless $form->validated;
-    $c->stash (
-        form_values => $form->fif
-    );
+    #$c->stash (
+    #    form_values => $form->fif
+    #);
+    $pedido = $c->model(__PACKAGE__->config->{'pedido'})->new({});
+    $pedido->populate_from_widget($validate);
+    $c->stash->{'widget_result'} = $validate;
 }
 
 =head2 cancelar
