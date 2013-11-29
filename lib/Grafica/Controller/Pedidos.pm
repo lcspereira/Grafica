@@ -91,12 +91,17 @@ sub editar :Local :CaptureArgs(1){
 
     $validate = $form->process ($c->req);
     return unless $form->validated;
-    #$c->stash (
-    #    form_values => $form->fif
-    #);
-    $pedido = $c->model(__PACKAGE__->config->{'pedido'})->new({});
+    $pedido = $c->model('Grafica::Pedido')->new({});
     $pedido->populate_from_widget($validate);
-    $c->stash->{'widget_result'} = $validate;
+    foreach $produto (@produtos) {
+        $pedido->add_to_pedido_produto ({
+            id_pedido  => $pedido->,
+            id_cliente => $cliente,
+            id_produto => $produto,
+            quant      => $quant
+        });
+    }
+    $c->stash->{'widget_result'} = $form->result;
 }
 
 =head2 cancelar
