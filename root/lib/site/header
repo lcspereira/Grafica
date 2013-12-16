@@ -15,32 +15,22 @@
               Logged in as <a href="#" class="navbar-link">Username</a>
             </p>
             <ul class="nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Módulo <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+          			<li><a href="#">Pedidos</a></li>
+          			<li><a href="#">Estoque</a></li>
+          			<li><a href="#">Clientes</a></li>
+            	</ul>
+          	  
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Opções <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+          			<li><a href="#">Buscar</a></li>
+          			<li><a href="#">Inserir</a></li>
+          			<li><a href="#">Excluir</a></li>
+            	</ul>
               <li>
-                <div class="dropdown">
-                  <button class="btn dropdown-toggle sr-only" type="button" id="menuModulos" data-toggle="dropdown">
-                    MÃ³dulos
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Pedidos</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Produtos</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Clientes</a></li>
-                  </ul>
-                </div>
-              </li>
-              <li>
-                <div class="dropdown">
-                  <button class="btn dropdown-toggle sr-only" type="button" id="menuOpcoes" data-toggle="dropdown">
-                    OpÃ§oes
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Cadastrar</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Excluir</a></li>
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Consultar</a></li>
-                  </ul>
-                </div>
-              </li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>

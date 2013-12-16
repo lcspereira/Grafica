@@ -4,8 +4,9 @@
 {
     package Grafica::Form::Pedido;
     use HTML::FormHandler::Moose;
-    extends 'HTML::FormHandler::Model::DBIC';
+    extends 'HTML::FormHandler';
     use namespace::autoclean;
+    with 'HTML::FormHandler::TraitFor::Model::DBIC';
     with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
     has '+widget_wrapper'    => ( 
@@ -54,6 +55,7 @@
         label  => 'Incluir',
     );
 
+	
     no HTML::FormHandler::Moose;
     1;
 }

@@ -4,8 +4,9 @@
 {
     package Grafica::Form::ClienteForm;
     use HTML::FormHandler::Moose;
-    extends 'HTML::FormHandler::Model::DBIC';
+    extends 'HTML::FormHandler';
     use namespace::autoclean;
+    with 'HTML::FormHandler::TraitFor::Model::DBIC';
     with 'HTML::FormHandler::Widget::Theme::Bootstrap';
 
     has '+widget_wrapper'      => ( 
@@ -71,7 +72,7 @@
     has_field 'submit'         => ( 
         widget => 'Submit', 
     );
-
+	
     no HTML::FormHandler::Moose;
     1;
 }

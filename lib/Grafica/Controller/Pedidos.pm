@@ -42,8 +42,11 @@ sub index :Path :Args(0) {
     );
 
     try {
-        @pedidos = $c->model(__PACKAGE__->config->{'pedido'})->search();
-        @colunas = $pedidos[0]->meta->get_all_attributes ();
+        @pedidos = $c->model('DB::Pedido')->search({
+        		        status => 1,
+        		        status => 3
+        		   });
+        @colunas = ("Código", "Data da encomenda", "Data de entrega", "Total", "Status");
         $c->stash (
             pedidos      => \@pedidos,
             colunas      => \@colunas
@@ -71,8 +74,8 @@ Carrega formulário de pedido.
 
 =cut
 
-sub editar :Local :CaptureArgs(1){
-    my ( $self, $c ) = @_;
+sub editar :Local Args(1){
+    my ( $self, $c, $id_pedido) = @_;
     my $pedido;
     my @clientes;
     my $validate;
@@ -83,6 +86,7 @@ sub editar :Local :CaptureArgs(1){
 
     my $form = $self->pedidoForm->run (
         action => 'incluir',
+        params => $c->req->params,
         name   => 'pedidoForm',
     );
     $c->stash (
@@ -101,14 +105,14 @@ sub editar :Local :CaptureArgs(1){
             quant      => $quant
         });
     }
-    $c->stash->{'widget_result'} = $form->result;
+  $c->stash->{'widget_result'} = $form->result;
 }
 
 =head2 cancelar
 
 =cut
 
-sub cancelar :Local :Args(0) {
+sub cancelar :Local Args(0) {
     my ( $self, $c ) = @_;
 }
 
@@ -116,8 +120,12 @@ sub cancelar :Local :Args(0) {
 
 =cut
 
-sub detalhes :Local :Args(0) {
-    my ( $self, $c ) = @_;
+sub detalhes :Local Args(1) {
+    my ( $self, $c, $id_pedido ) = @_;
+    $c->stash (
+    	pedido   => $c->model('DB::Pedido')->find($pedido_id),
+    	template => 'src/details.tt2'
+    );
 }
 
 =encoding utf8
