@@ -69,10 +69,12 @@
         size => 10, 
     );
                 
-    has_field 'submit'         => ( 
-        widget => 'Submit', 
+    has_field 'submit'       => ( 
+        type          => 'submit',
+        value         => 'Incluir',
+        element_class => ['btn'],
     );
-	
+
     no HTML::FormHandler::Moose;
     1;
 }

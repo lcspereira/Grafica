@@ -41,31 +41,15 @@ sub index :Path :Args(0) {
         template     => 'welcome.tt2'
     );
 
-    try {
-        @pedidos = $c->model('DB::Pedido')->search({
-        		        status => 1,
-        		        status => 3
-        		   });
-        @colunas = ("Código", "Data da encomenda", "Data de entrega", "Total", "Status");
-        $c->stash (
-            pedidos      => \@pedidos,
-            colunas      => \@colunas
-        );
-    } catch {
-        my $err = $_;
-        given ($err) {
-            when (/Can't\ call\ method\ "meta"\ on\ an\ undefined\ value/) {
-                # Caso não consiga carregar os dados da base, 
-                # não exibe a tabela.
-                $c->stash (
-                    no_pedidos   => 1
-                );
-            }
-            default {
-                die ($err);
-            }
-        };
-    };
+    @pedidos = $c->model('DB::Pedido')->search({
+                status => 1,
+                status => 3
+           });
+    @colunas = ("Código", "Data da encomenda", "Data de entrega", "Total", "Status");
+    $c->stash (
+        pedidos      => \@pedidos,
+        colunas      => \@colunas
+    );
 }
 
 =head2 editar
@@ -76,6 +60,8 @@ Carrega formulário de pedido.
 
 sub editar :Local Args(1){
     my ( $self, $c, $id_pedido) = @_;
+    my $produto;
+    my @produtos;
     my $pedido;
     my @clientes;
     my $validate;
@@ -93,18 +79,18 @@ sub editar :Local Args(1){
         form => $form,
     );
 
-    $validate = $form->process ($c->req);
+    #$validate = $form->process ($c->req);
     return unless $form->validated;
-    $pedido = $c->model('Grafica::Pedido')->new({});
+    $pedido = $c->model('DB::Pedido')->new({});
     $pedido->populate_from_widget($validate);
-    foreach $produto (@produtos) {
-        $pedido->add_to_pedido_produto ({
-            id_pedido  => $pedido->,
-            id_cliente => $cliente,
-            id_produto => $produto,
-            quant      => $quant
-        });
-    }
+    #foreach $produto (@produtos) {
+    #    $pedido->add_to_pedido_produto ({
+    #        id_pedido  => $pedido->,
+    #        id_cliente => $cliente,
+    #        id_produto => $produto,
+    #       quant      => $quant
+    #    });
+    #}
   $c->stash->{'widget_result'} = $form->result;
 }
 
@@ -123,7 +109,7 @@ sub cancelar :Local Args(0) {
 sub detalhes :Local Args(1) {
     my ( $self, $c, $id_pedido ) = @_;
     $c->stash (
-    	pedido   => $c->model('DB::Pedido')->find($pedido_id),
+    	pedido   => $c->model('DB::Pedido')->find($id_pedido),
     	template => 'src/details.tt2'
     );
 }

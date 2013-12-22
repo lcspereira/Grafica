@@ -38,9 +38,10 @@
         message_required => 'Por favor, informe o preço do produto.'
     );
     
-    has_field 'submit'    => ( 
-        label  => 'Cadastrar',
-        widget => 'Submit', 
+    has_field 'submit'       => ( 
+        type          => 'submit',
+        value         => 'Incluir',
+        element_class => ['btn'],
     );
 
     no HTML::FormHandler::Moose;

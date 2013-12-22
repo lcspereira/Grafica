@@ -51,8 +51,9 @@
     );
 
     has_field 'submit'       => ( 
-        widget => 'Submit', 
-        label  => 'Incluir',
+        type          => 'submit',
+        value         => 'Incluir',
+        element_class => ['btn'],
     );
 
 	
