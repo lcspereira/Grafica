@@ -1,7 +1,9 @@
 package Grafica::Controller::Clientes;
 use Moose;
 use namespace::autoclean;
+use Grafica::Form::Cliente;
 use Catalyst qw/Session Session::Store::FastMmap Session::State::Cookie/;
+use utf8;
 BEGIN { extends 'Catalyst::Controller'; }
 
 has clienteForm => (
@@ -27,20 +29,19 @@ Catalyst Controller.
 
 =cut
 
-sub formulario () {
+sub formulario {
     my ($self, $c, $idCliente) = @_;
     my $result;
     my %formOpt = (
         params => $c->req->params,
-        method => 'post'
     );
     if ($idCliente) {
-        $formOpt{'action'} = $c->uri_for_action(qw/clientes atualizar/);
+        $formOpt{'action'} = $c->uri_for(qw/clientes atualizar/);
         $formOpt{'item'}   = $c->model('DB::Cliente')->find($idCliente);
     } else {
-        $formOpt{'action'} = $c->uri_for_action(qw/clientes cadastrar/);
+        $formOpt{'action'} = $c->uri_for(qw/clientes cadastrar/);
     }
-    $result = $c->clienteForm->run(%formOpt);
+    $result = $self->clienteForm->run(%formOpt);
     return $result;
 }
 
@@ -48,7 +49,7 @@ sub formulario () {
 
 =cut
 
-sub index :Path :Args(0) {
+sub index :Path() :Args(0) {
     my ( $self, $c ) = @_;
     my @colunas;
     my @colunas_tabela;
@@ -81,8 +82,39 @@ sub index :Path :Args(0) {
 
 =cut
 
-sub editar :Path :Args(0) {
-    my ( $self, $c, $id_cliente) = @_;
+sub editar :Local :Args(0) {
+    my ( $self, $c) = @_;
+    my $form        = $self->formulario($c);
+    $c->stash (
+        form     => $form,
+        template => 'clientes/edit.tt2'
+    );
+    return unless $form->validated ();
+}
+
+
+=head2 index
+
+=cut
+
+sub cadastrar :Local {
+    my ( $self, $c ) = @_;
+    my $cliente = $c->model('DB::Cliente')->new_result({});
+    $DB::Single = 1;
+    $c->stash (
+        cliente        => $cliente,
+        insert_success => 1
+    );
+    
+    $c->res->redirect($c->uri_for(qw/clientes/));
+}
+
+=head2 index
+
+=cut
+
+sub excluir :Local :Args(0) {
+    my ( $self, $c ) = @_;
     
 }
 
@@ -91,28 +123,7 @@ sub editar :Path :Args(0) {
 
 =cut
 
-sub cadastrar :Path {
-    my ( $self, $c, $id_cliente ) = @_;
-
-    $c->response->body('Matched Grafica::Controller::Clientes in Clientes.');
-}
-
-=head2 index
-
-=cut
-
-sub excluir :Path :Args(0) {
-    my ( $self, $c ) = @_;
-
-    $c->response->body('Matched Grafica::Controller::Clientes in Clientes.');
-}
-
-
-=head2 index
-
-=cut
-
-sub detalhes :Path :Args(0) {
+sub detalhes :Local :Args(1) {
     my ( $self, $c ) = @_;
 
     $c->response->body('Matched Grafica::Controller::Clientes in Clientes.');

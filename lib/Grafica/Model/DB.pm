@@ -7,7 +7,7 @@ __PACKAGE__->config(
     schema_class => 'Grafica::DB',
     
     connect_info => {
-        dsn => 'dbi:Pg:dbname=grafica',
+        dsn => 'dbi:Pg:dbname=grafica_demo',
         user => 'postgres',
         password => '',
     }

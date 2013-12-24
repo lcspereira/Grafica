@@ -58,7 +58,7 @@ Carrega formulário de pedido.
 
 =cut
 
-sub editar :Local Args(1){
+sub editar :Local Args(0){
     my ( $self, $c, $id_pedido) = @_;
     my $produto;
     my @produtos;
