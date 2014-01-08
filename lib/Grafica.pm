@@ -20,6 +20,12 @@ use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
+    Session
+    Session::Store::FastMmap
+    Session::State::Cookie
+    StackTrace
+    RequireSSL
+    Unicode::Encoding
 /;
 
 extends 'Catalyst';
@@ -42,6 +48,11 @@ __PACKAGE__->config(
     enable_catalyst_header => 1, # Send X-Catalyst header
 );
 
+__PACKAGE__->config->{'session'} = {
+    expires => 3600,
+    rewrite => 1,
+    storage => 'c:\\windows\\temp\\session',
+};
 # Start the application
 __PACKAGE__->setup();
 

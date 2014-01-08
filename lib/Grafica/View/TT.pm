@@ -13,7 +13,8 @@ __PACKAGE__->config({
     ],
     TIMER              => 0,
     static_root        => '/static',
-    static_build       => 0
+    static_build       => 0,
+    ENCODING           => 'utf8',
 });
 
 sub template_vars {

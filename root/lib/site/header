@@ -11,9 +11,6 @@
           <a class="brand" href="#">[% template.title or site.title %]</a>
           <div class="nav-collapse collapse">
 
-            <p class="navbar-text pull-right">
-              Logged in as <a href="#" class="navbar-link">Username</a>
-            </p>
             <ul class="nav">
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Módulo <b class="caret"></b></a>
