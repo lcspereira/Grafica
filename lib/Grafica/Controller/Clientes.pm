@@ -39,6 +39,7 @@ TODO: Implementar pesquisa por endereço.
 sub index :Path() :Args(0) {
     my ( $self, $c ) = @_;
     my @colunas;
+    my @clientes;
     my @colunas_tabela;
     my $params              = $c->req->params;
     $c->stash->{'template'} = 'clientes/index.tt2';
@@ -47,8 +48,10 @@ sub index :Path() :Args(0) {
             nome => $params->{'nome'}
         });
     } else {
-        $c->stash->{'clientes'} = $c->model('DB::Cliente')->all;
+        @clientes = $c->model('DB::Cliente')->all;
+        $c->stash->{'clientes'} = \@clientes;
     }
+    $c->log->debug ("Clientes: " . $c->stash->{'clientes'});
     @colunas               = ('Nome', 'Endereço', 'Telefone', 'E-mail');
     $c->stash->{'colunas'} = \@colunas;
 }
@@ -83,6 +86,7 @@ sub editar :Local :Args() {
     $c->stash->{'form'}     = $form;
     $c->stash->{'template'} ='clientes/edit.tt2';
     return unless ($form->validated);
+    $c->flash->{'form_params'} = $c->req->params;
     $c->res->redirect ($action);
 }
 
@@ -117,11 +121,12 @@ Atualiza cliente na base de dados.
 
 sub atualizar :Local {
     my ( $self, $c ) = @_;
-    my $params       = $c->req->params;       
+    my $params       = $c->flash->{'form_params'};       
     my $cliente;
     try {
         # Atualiza cliente conforme os parâmetros.
-        $cliente = $c->flash->{'cliente'};
+        $cliente = $c->model('DB::Cliente')->find ($c->flash->{'cliente'}->id);
+
         $cliente->update ({
             nome           => $params->{'nome'},
             cpf_cnpj       => $params->{'cpf_cnpj'},
@@ -139,7 +144,6 @@ sub atualizar :Local {
         $c->res->redirect ($c->uri_for (''));
     } catch {
       $c->flash->{'erro'}           = "Erro ao atualizar cliente: $_";
-      $c->log->debug ($c->flash->{'erro'});
       $c->flash->{'update_success'} = undef;
       $c->res->redirect ($c->uri_for ('editar', $cliente->id));
     };

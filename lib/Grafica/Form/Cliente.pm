@@ -32,7 +32,7 @@
         required         => 1, 
         required_message => 'Por favor, informe o CPF OU CNPJ do cliente.',
         apply            => [ {
-            check   => /\d{3}.\d{3}.\d{3}-\d{2}/,
+            check   => qr/^[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}$/,
             message => 'CPF inválido.'
         } ]
     );
@@ -42,7 +42,7 @@
         label => 'I.E.: ',
         size  => 11,
         apply => [ {
-            check   => /\d{3}\/\d{5}/,
+            check   => qr/^[0-9]{3}\/[0-9]{5}$/,
             message => 'I.E. inválido.'
         } ]
     );
@@ -80,7 +80,7 @@
         label => 'CEP:',
         size  => 9, 
         apply => [ {
-            check   => /\d{5,5}-\d{3,3}/,
+            check   => qr/^[0-9]{5}-[0-9]{3}$/,
             message => 'CEP inválido.'
         } ]
     );
@@ -90,7 +90,7 @@
         label => 'E-mail:',
         size  => 50,
         apply => [ {
-            check   => /\w@\w/,
+            check   => qr/\@{1}/,
             message => 'E-mail inválido.'
         } ]
     );

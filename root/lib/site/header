@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">[% template.title or site.title %]</a>
+          <a class="brand" href="#">Tecnicópias</a>
           <div class="nav-collapse collapse">
 
             <ul class="nav">

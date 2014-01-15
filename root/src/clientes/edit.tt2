@@ -1,12 +1,18 @@
-[% META title = 'Catalyst/Boostrap TT View' %]
 <div class="row-fluid">
     <div class="page-header">
         <h3>Cadastro de cliente</h3>
     </div>
 </div>
-<div class="row-fluid" onload=formButtons('clienteForm')>
+<div class="row-fluid">
+    [% IF c.flash.erro %]
+        <div class="alert alert-danger">
+            <span class="error_message">
+                [% c.flash.erro %]
+            </span>
+        </div>
+    [% END %]
     [% form.render %]
-    <script type=text/javascript src="http://localhost:3000/js/utils.js"></script>
+    <script type=text/javascript src="../../js/utils.js"></script>
     <script type=text/javascript>
         formButtons ('formCliente');
     </script>

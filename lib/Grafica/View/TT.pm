@@ -1,6 +1,7 @@
 package Grafica::View::TT;
 
 use strict;
+use utf8;
 use base 'Catalyst::View::TT';
 
 __PACKAGE__->config({
