@@ -9,10 +9,10 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 # Formulário de cliente.
 has cliente_form => (
-  isa     => 'Grafica::Form::Cliente',
-  is      => 'rw',
-  lazy    => 1,
-  default => sub { Grafica::Form::Cliente->new },
+    isa     => 'Grafica::Form::Cliente',
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { Grafica::Form::Cliente->new },
 );
 
 =head1 NAME
@@ -139,7 +139,7 @@ sub atualizar :Local {
             cep            => $params->{'cep'},
             cidade         => $params->{'cidade'}
         });
-        $c->flash->{'cliente_update'}        = $cliente;
+        $c->flash->{'cliente_update'} = $cliente;
         $c->flash->{'update_success'} = 1;
         $c->res->redirect ($c->uri_for (''));
     } catch {

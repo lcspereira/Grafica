@@ -28,12 +28,10 @@
     has_field 'cpf_cnpj'       => ( 
         type             => 'Text', 
         label            => 'CPF/CNPJ: ',
-        size             => 20, 
-        required         => 1, 
-        required_message => 'Por favor, informe o CPF OU CNPJ do cliente.',
+        size             => 20,
         apply            => [ {
             check   => qr/^[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}$/,
-            message => 'CPF inválido.'
+            message => 'CPF inválido. (CPF deve ser digitado com pontos e traços.)'
         } ]
     );
     
@@ -43,22 +41,18 @@
         size  => 11,
         apply => [ {
             check   => qr/^[0-9]{3}\/[0-9]{5}$/,
-            message => 'I.E. inválido.'
+            message => 'I.E. inválido. (I.E. deve ser digitado com a barra.)'
         } ]
     );
 
     has_field 'endereco'       => ( 
         type             => 'Text',
         label            => 'Endereço:',
-        required         => 1, 
-        required_message => 'Por favor, informe o endereço do cliente.'
     );
    
     has_field 'num_endereco'   => ( 
         type             => 'Integer', 
         label            => 'Número:',
-        required         => 1, 
-        required_message => 'Por favor, informe o número do endereço.'
     );
  
     has_field 'compl_endereco' => ( 
@@ -71,8 +65,6 @@
         type             => 'Text', 
         label            => 'Cidade:',
         size             => 30, 
-        required         => 1,
-        required_message => 'Por favor, informe a cidade.'
     );
     
     has_field 'cep'            => ( 
@@ -81,7 +73,7 @@
         size  => 9, 
         apply => [ {
             check   => qr/^[0-9]{5}-[0-9]{3}$/,
-            message => 'CEP inválido.'
+            message => 'CEP inválido. (CEP deve ser digitado com traço.)'
         } ]
     );
     
