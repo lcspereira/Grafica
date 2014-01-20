@@ -11,25 +11,35 @@
     <h3>Clientes</h3>
   </div>
 </div>
+
 <div class="row-fluid">
+    <div class="col-lg-6">
+        <div class="input-group">
+            <input type="text" class="form-control">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Buscar</button>
+            </span>
+        </div><!-- /input-group -->
+    </div><!-- /.col-lg-6 -->
+
 <table id="books" class="table table-bordered table-striped tablesorter table-hover" summary="The list of all books">
   <thead>
     <tr>
       [% FOR coluna IN colunas %]
-      <th scope="col">[% coluna %]</th>
+          <th scope="col">[% coluna %]</th>
       [% END %]
       <th/>
     </tr>
   </thead>
   <tbody>
     [% FOR cliente IN clientes %]
-    <tr>
-      <td>[% cliente.nome %]</td>
-      <td>[% cliente.endereco %], [% cliente.num_endereco %]
-          [% IF cliente.compl_endereco != '' %]
-              ,[% cliente.compl_endereco %]
-          [% END %]
-      </td>
+        <tr>
+            <td>[% cliente.nome %]</td>
+            <td>[% cliente.endereco %], [% cliente.num_endereco %]
+                [% IF cliente.compl_endereco != '' %]
+                    ,[% cliente.compl_endereco %]
+                [% END %]
+            </td>
       <td>[% cliente.telefone %]</td>
       <td>[% cliente.email %]</td>
       <td>

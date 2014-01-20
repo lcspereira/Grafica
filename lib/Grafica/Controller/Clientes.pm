@@ -49,7 +49,7 @@ sub index :Path() :Args(0) {
         });
     } else {
         @clientes = $c->model('DB::Cliente')->all;
-        $c->stash->{'clientes'} = \@clientes;
+        $c->stash->{'clientes'} = [ $c->model('DB::Cliente')->all ];
     }
     $c->log->debug ("Clientes: " . $c->stash->{'clientes'});
     @colunas               = ('Nome', 'Endereço', 'Telefone', 'E-mail');
@@ -152,7 +152,8 @@ sub atualizar :Local {
 
 =head2 excluir
 
-Exclui o(s) cliente(s) do banco de dados.
+Exclui o cliente do banco de dados.
+
 
 =cut
 
@@ -160,12 +161,7 @@ sub excluir :Local :Args(0) {
     my ( $self, $c) = @_;
     my $id_cliente;
     try {
-        # Exclui os clientes em transação.
-        $c->model('DB::Cliente')->txn_do(sub {
-              foreach $id_cliente ($c->session->{'clientesExcluir'}) {
-                  $c->model('DB::Cliente')->find($id_cliente)->delete;
-              }
-        });
+        $c->model('DB::Cliente')->find($id_cliente)->delete;
         $c->session->{'delete_success'} = 1;
         $c->res->redirect ($c->uri_for ('index'));
     } catch {
@@ -186,15 +182,12 @@ sub detalhes :Local :Args(1) {
     $c->stash (
         cliente  => $c->model('DB::Cliente')->find($id_cliente),
         # Procura os pedidos associados ao cliente.
-        pedidos  => $c->model('DB::Pedido')->search ({
+        pedidos  => [ $c->model('DB::Pedido')->search ({
             id_cliente => $id_cliente,
             status     => {
-                -between => [1, 3]
-            }, 
-            {
-                join => 'pedido',
-            }
-        }),
+                -in => [ 1, 3 ]
+            },  
+        }) ],
         template => 'clientes/details.tt2'
     );
 }
