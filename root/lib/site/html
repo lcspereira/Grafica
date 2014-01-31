@@ -3,7 +3,10 @@
  <head>
   <title>Tecnicópias Grafica e Editora LTDA.</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+  <link href="http://[% c.req.uri.host %]:[% c.req.uri.port %]/css/bootstrap-combined.min.css" rel="stylesheet">
+  <link href="http://[% c.req.uri.host %]:[% c.req.uri.port %]/css/bootstrap-glyphicons.css" rel="stylesheet">
+  <script type="text/javascript" src="http://[% c.req.uri.host %]:[% c.req.uri.port %]/js/jquery.js"></script>
+  <script type="text/javascript" src="http://[% c.req.uri.host %]:[% c.req.uri.port %]/js/bootstrap.js"></script>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
   <style type="text/css">
 body {
@@ -19,7 +22,5 @@ padding: 9px 0;
  <body>
 [% content %]
 
- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
- <script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
  </body>
 </html>
