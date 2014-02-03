@@ -4,10 +4,10 @@
     </div>
 </div>
 <div class="row-fluid">
-    [% IF c.flash.erro %]
+    [% IF c.flash.message %]
         <div class="alert alert-danger">
             <span class="error_message">
-                [% c.flash.erro %]
+                [% c.flash.message %]
             </span>
         </div>
     [% END %]

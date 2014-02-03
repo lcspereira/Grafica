@@ -1,7 +1,13 @@
-[% IF c.flash.erro %]
+[% IF c.flash.message.match ('^Erro') %]
     <div class="alert alert-danger">
         <span class="error_message">
-            [% c.flash.erro %]
+            [% c.flash.message %]
+        </span>
+    </div>
+[% ELSE %]
+    <div class="alert alert-success">
+        <span class="success_message">
+            [% c.flash.message %]
         </span>
     </div>
 [% END %]
@@ -40,16 +46,16 @@
                     ,[% cliente.compl_endereco %]
                 [% END %]
             </td>
-      <td>[% cliente.telefone %]</td>
-      <td>[% cliente.email %]</td>
-      <td>
-        <div class="btn-group">
-        <a class="btn btn-mini" href="[% c.uri_for ('detalhes', cliente.id) %]" rel="tooltip" title="Detalhes"><span class="glyphicon glyphicon-search"></span></a>
-        <a class="btn btn-mini" href="[% c.uri_for ('editar', cliente.id) %]" rel="tooltip" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
-        <a class="btn btn-mini" href="[% c.uri_for ('excluir') %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
-        </div>
-      </td>
-    </tr>
+            <td>[% cliente.telefone %]</td>
+            <td>[% cliente.email %]</td>
+            <td>
+                <div class="btn-group">
+                    <a class="btn btn-mini" href="[% c.uri_for ('detalhes', cliente.id) %]" rel="tooltip" title="Detalhes"><span class="glyphicon glyphicon-search"></span></a>
+                    <a class="btn btn-mini" href="[% c.uri_for ('editar', cliente.id) %]" rel="tooltip" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
+                    <a class="btn btn-mini" href="[% c.uri_for ('excluir', cliente.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
+                </div>
+            </td>
+        </tr>
     [% END %]
   </tbody>
 </table>

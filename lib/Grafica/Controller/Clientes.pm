@@ -17,7 +17,7 @@ has cliente_form => (
 
 =head1 NAME
 
-Grafica::Controller::Clientes - Catalyst Controller
+Grafica::Controller::Clientes - Módulo para cadastro/consulta de clientes.
 
 =head1 DESCRIPTION
 
@@ -40,7 +40,6 @@ sub index :Path() :Args(0) {
     my ( $self, $c ) = @_;
     my @colunas;
     my @clientes;
-    my @colunas_tabela;
     my $params              = $c->req->params;
     $c->stash->{'template'} = 'clientes/index.tt2';
     if ($params->{'nome'}) {
@@ -48,10 +47,8 @@ sub index :Path() :Args(0) {
             nome => $params->{'nome'}
         });
     } else {
-        @clientes = $c->model('DB::Cliente')->all;
         $c->stash->{'clientes'} = [ $c->model('DB::Cliente')->all ];
     }
-    $c->log->debug ("Clientes: " . $c->stash->{'clientes'});
     @colunas               = ('Nome', 'Endereço', 'Telefone', 'E-mail');
     $c->stash->{'colunas'} = \@colunas;
 }
@@ -62,6 +59,8 @@ Formulário de edição de cliente.
 
 É utilizado tanto para cadastro novo, quanto para
 editar contatos existentes.
+
+@param int: Código do cliente.
 
 =cut
 
@@ -101,13 +100,11 @@ sub cadastrar :Local Args(0){
     my ( $self, $c ) = @_;
     my $cliente = $c->flash->{'cliente'};
     try {
-        $cliente->insert();
-        $c->flash->{'cliente_insert'} = $cliente;
-        $c->flash->{'insert_success'} = 1;
+        $cliente->insert;
+        $c->flash->{'message'} = "Cliente " . $cliente->id . " cadastrado com sucesso.";
         $c->res->redirect ($c->uri_for (''));
     } catch {
-        $c->flash->{'erro'}           = "Erro ao inserir cliente: $_";
-        $c->flash->{'insert_success'} = undef;
+        $c->flash->{'message'}           = "Erro ao inserir cliente: $_";
         $c->res->redirect ($c->uri_for ('editar'));
     };
 }
@@ -139,12 +136,10 @@ sub atualizar :Local {
             cep            => $params->{'cep'},
             cidade         => $params->{'cidade'}
         });
-        $c->flash->{'cliente_update'} = $cliente;
-        $c->flash->{'update_success'} = 1;
+        $c->flash->{'message'}        = "Cliente " . $cliente->id . " adicionado com sucesso.";
         $c->res->redirect ($c->uri_for (''));
     } catch {
-      $c->flash->{'erro'}           = "Erro ao atualizar cliente: $_";
-      $c->flash->{'update_success'} = undef;
+      $c->flash->{'message'}           = "Erro ao atualizar cliente: $_";
       $c->res->redirect ($c->uri_for ('editar', $cliente->id));
     };
 }
@@ -154,19 +149,19 @@ sub atualizar :Local {
 
 Exclui o cliente do banco de dados.
 
+@param int: Código do cliente.
 
 =cut
 
-sub excluir :Local :Args(0) {
-    my ( $self, $c) = @_;
-    my $id_cliente;
+sub excluir :Local :Args(1) {
+    my ( $self, $c, $id_cliente ) = @_;
     try {
         $c->model('DB::Cliente')->find($id_cliente)->delete;
-        $c->session->{'delete_success'} = 1;
-        $c->res->redirect ($c->uri_for ('index'));
+        $c->flash->{'message'} = "Cliente " . $id_cliente . " excluído com sucesso.";
     } catch {
-        die ("Erro ao excluir cliente $id_cliente: $_");
+        $c->flash->{'message'} = "Erro ao excluir cliente: $_";
     };
+    $c->res->redirect ($c->uri_for (''));
 }
 
 
@@ -174,6 +169,8 @@ sub excluir :Local :Args(0) {
 
 Consulta dados de um determinado cliente
 e os exibe na tela.
+
+@param int: Código do cliente.
 
 =cut
 
@@ -196,9 +193,12 @@ sub detalhes :Local :Args(1) {
 
 =head1 AUTHOR
 
-,,,
+Lucas Pereira (lucas.pereira6c@gmail.com)
 
 =head1 LICENSE
+
+Esta biblioteca é software livre. Você pode redistribuí-la e/ou modificá-la
+sob os mesmos termos que o próprio Perl.
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -36,4 +36,4 @@
 
 <hr>
 
-<p><a class="btn btn-primary" href="[% c.uri_for('list') %]">List all books</a></p>
+<p><a class="btn btn-primary" href="[% c.uri_for('') %]">Listar clientes</a></p>
