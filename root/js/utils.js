@@ -22,7 +22,7 @@ function formButtons (nomeForm) {
     botaoLimpar.type    = "button";
     botaoLimpar.value   = "Limpar";
     botaoLimpar.setAttribute ("class", "btn btn-primary");
-    botaoLimpar.setAttribute ("onclick", "clearForm ('" + nomeForm + "')");
+    botaoLimpar.setAttribute ("onclick", "document.getElementById ('" + nomeForm + "').reset ()");
 
     /* -------------------------------- */
 
@@ -58,21 +58,3 @@ function formButtons (nomeForm) {
 
 /******************************************/
 
-
-
-/*****************************************
- * clearForm
- *****************************************
- * Limpa os campos do formulário.
- *
- * @param form: Objeto do formulário.
- *****************************************/
-
-function clearForm (nomeForm) {
-    var formulario = document.getElementById (nomeForm);
-    formulario.forEach (function (campo) {
-        campo.value = "";
-    })
-}
-
-/******************************************/

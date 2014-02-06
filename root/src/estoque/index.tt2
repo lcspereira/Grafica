@@ -4,7 +4,7 @@
             [% c.flash.message %]
         </span>
     </div>
-[% ELSE %]
+[% ELSIF c.flash.message.match ('sucesso.$') %]
     <div class="alert alert-success">
         <span class="success_message">
             [% c.flash.message %]
@@ -41,8 +41,8 @@
     [% FOR produto IN produtos %]
         <tr>
             <td>[% produto.descr %]</td>
-            <td>[% produto.quant %]</td>
             <td>[% produto.preco %]</td>
+            <td>[% produto.quant %]</td>
             <td>
                 <div class="btn-group">
                     <a class="btn btn-mini" href="[% c.uri_for ('detalhes', produto.id) %]" rel="tooltip" title="Detalhes"><span class="glyphicon glyphicon-search"></span></a>

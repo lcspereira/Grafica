@@ -16,15 +16,15 @@ has produto_form => (
     default => sub { Grafica::Form::Produto->new },
 );
 
-=head1 NAME
+=head1 Nome
 
-Grafica::Controller::Estoque - Catalyst Controller
+Grafica::Controller::Estoque
 
-=head1 DESCRIPTION
+=head1 DESCRIÇÃO
 
-Catalyst Controller.
+Controller que representa o módulo Estoque.
 
-=head1 METHODS
+=head1 MÉTODOS
 
 =cut
 
@@ -34,11 +34,12 @@ Catalyst Controller.
 =cut
 
 sub index :Path :Args(0) {
-    my ( $self, $c )        = @_;
-    my @colunas             = ('Produto', 'Preço', 'Quantidade');
-    $c->stash->{'produtos'} = [ $c->model('DB::Produto')->all ];
-    $c->stash->{'colunas'}  = \@colunas;
-    $c->stash->{'template'} = 'estoque/index.tt2';
+    my ( $self, $c )            = @_;
+    my @colunas                 = ('Produto', 'Preço', 'Quantidade');
+    $c->stash->{'current_view'} = 'TT';
+    $c->stash->{'produtos'}     = [ $c->model('DB::Produto')->all ];
+    $c->stash->{'colunas'}      = \@colunas;
+    $c->stash->{'template'}     = 'estoque/index.tt2';
 
 }
 
@@ -104,7 +105,7 @@ sub atualizar :Local :Args(0) {
             quant => $params->{'quant'}
         });
         $c->flash->{'message'} = "Produto " . $produto->id . " atualizado com sucesso.";
-        $c->res->redirect ('');
+        $c->res->redirect ($c->uri_for (''));
     } catch {
         $c->flash->{'message'} = "Erro ao atualizar produto: $_";
         $c->res->redirect ($c->uri_for ('editar'));
@@ -134,7 +135,7 @@ sub detalhes :Local :Args(1) {
     my ( $self, $c, $id_cliente ) = @_;
     $c->stash (
         produto  => $c->model("DB::Produto")->find ($id_cliente),
-        template => 'produto/details.tt2',
+        template => 'estoque/details.tt2',
     );
 }
 

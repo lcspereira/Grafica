@@ -23,21 +23,21 @@
         label            => 'Descrição: ',
         type             => 'TextArea', 
         required         => 1,
-        message_required => 'Por favor, digite uma breve descrição do produto.',
+        required_message => 'Por favor, digite uma breve descrição do produto.',
     );
 
     has_field 'quant'     => ( 
         label            => 'Quantidade: ',
         type             => 'Float', 
         required         => 1,
-        message_required => 'Por favor, informe a quantidade do produto.'        
+        required_message => 'Por favor, informe a quantidade do produto.'        
     );
 
     has_field 'preco'     => (
         label            => 'Preço: R$',
         type             => 'Float', 
         required         => 1,
-        message_required => 'Por favor, informe o preço do produto.',
+        required_message => 'Por favor, informe o preço do produto.',
     );
     
     has_field 'submit'       => ( 

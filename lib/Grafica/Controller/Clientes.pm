@@ -15,15 +15,15 @@ has cliente_form => (
     default => sub { Grafica::Form::Cliente->new },
 );
 
-=head1 NAME
+=head1 NOME
 
 Grafica::Controller::Clientes - Módulo para cadastro/consulta de clientes.
 
-=head1 DESCRIPTION
+=head1 DESCRIÇÃO
 
-Catalyst Controller.
+Controller para cadastro / edição de dados de clientes.
 
-=head1 METHODS
+=head1 METO
 
 =cut
 
@@ -40,8 +40,9 @@ sub index :Path() :Args(0) {
     my ( $self, $c ) = @_;
     my @colunas;
     my @clientes;
-    my $params              = $c->req->params;
-    $c->stash->{'template'} = 'clientes/index.tt2';
+    my $params                  = $c->req->params;
+    $c->stash->{'current_view'} = 'TT';
+    $c->stash->{'template'}     = 'clientes/index.tt2';
     if ($params->{'nome'}) {
         $c->stash->{'cliente'} = $c->model->('DB::Cliente')->search({
             nome => $params->{'nome'}
@@ -72,7 +73,11 @@ sub editar :Local :Args() {
     my %form_opt = (
         params => $c->req->params,
         name   => 'formCliente'
-    );
+    ); # Opções para geração de formulário
+    
+    # Verifica se o formulário será preenchido
+    # com dados de cliente existente na base de dados,
+    # ou se cria um formulário em branco.
     if ($id_cliente) {
         $c->flash->{'cliente'} = $c->model('DB::Cliente')->find($id_cliente);
         $action                = $c->uri_for ('atualizar');
@@ -80,11 +85,14 @@ sub editar :Local :Args() {
         $c->flash->{'cliente'} = $c->model('DB::Cliente')->new({});
         $action                = $c->uri_for ('cadastrar');
     }
+
     $form_opt{'item'}       = $c->flash->{'cliente'};
     $form                   = $self->cliente_form->run(%form_opt);
     $c->stash->{'form'}     = $form;
     $c->stash->{'template'} ='clientes/edit.tt2';
-    return unless ($form->validated);
+    
+    return unless ($form->validated);              # Validação do formulário.
+    
     $c->flash->{'form_params'} = $c->req->params;
     $c->res->redirect ($action);
 }
@@ -104,7 +112,7 @@ sub cadastrar :Local Args(0){
         $c->flash->{'message'} = "Cliente " . $cliente->id . " cadastrado com sucesso.";
         $c->res->redirect ($c->uri_for (''));
     } catch {
-        $c->flash->{'message'}           = "Erro ao inserir cliente: $_";
+        $c->flash->{'message'} = "Erro ao inserir cliente: $_";
         $c->res->redirect ($c->uri_for ('editar'));
     };
 }
@@ -112,7 +120,7 @@ sub cadastrar :Local Args(0){
 
 =head2 atualizar
 
-Atualiza cliente na base de dados.
+Atualiza cliente existente na base de dados.
 
 =cut
 
@@ -136,10 +144,10 @@ sub atualizar :Local {
             cep            => $params->{'cep'},
             cidade         => $params->{'cidade'}
         });
-        $c->flash->{'message'}        = "Cliente " . $cliente->id . " adicionado com sucesso.";
+        $c->flash->{'message'} = "Cliente " . $cliente->id . " adicionado com sucesso.";
         $c->res->redirect ($c->uri_for (''));
     } catch {
-      $c->flash->{'message'}           = "Erro ao atualizar cliente: $_";
+      $c->flash->{'message'} = "Erro ao atualizar cliente: $_";
       $c->res->redirect ($c->uri_for ('editar', $cliente->id));
     };
 }

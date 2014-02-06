@@ -69,29 +69,7 @@ sub editar :Local Args(0){
         current_view => 'TT',
         template     => 'pedidos/editar.tt2'
     );
-
-    my $form = $self->pedidoForm->run (
-        action => 'incluir',
-        params => $c->req->params,
-        name   => 'pedidoForm',
-    );
-    $c->stash (
-        form => $form,
-    );
-
-    #$validate = $form->process ($c->req);
-    return unless $form->validated;
-    $pedido = $c->model('DB::Pedido')->new({});
-    $pedido->populate_from_widget($validate);
-    #foreach $produto (@produtos) {
-    #    $pedido->add_to_pedido_produto ({
-    #        id_pedido  => $pedido->,
-    #        id_cliente => $cliente,
-    #        id_produto => $produto,
-    #       quant      => $quant
-    #    });
-    #}
-  $c->stash->{'widget_result'} = $form->result;
+    #return unless $form->validated;
 }
 
 =head2 cancelar

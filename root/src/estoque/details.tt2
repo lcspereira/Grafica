@@ -1,34 +1,16 @@
 <div class="row-fluid">
-  <h3> Dados do cliente: </h3>
+  <h3> Dados do produto: </h3>
   <br/>
   <br/>
   <div class="span8">
     <p>
-     <b class="title">Nome:</b> [% cliente.nome %]
+     <b class="title">Descrição:</b> [% produto.descr %]
     </p>
     <p>
-     <b class="title">CPF/CNPJ:</b> [% cliente.cpf_cnpj %]
+     <b class="title">Preço:</b> [% produto.preco %]
     </p>
     <p>
-     <b class="title">I.E.:</b> [% cliente.ie %]
-    </p>
-    <p>
-     <b class="title">Telefone:</b> [% cliente.telefone %]
-    </p>
-    <p>
-     <b class="title">E-mail:</b> [% cliente.email %]
-    </p>
-    <p>
-     <b class="title">Endereço:</b> [% cliente.endereco %], [% cliente.num_endereco %]
-        [% IF cliente.compl_endereco %]
-            , [% cliente.compl_endereco %]
-        [% END %]
-    </p>
-    <p>
-     <b class="title">CEP:</b> [% cliente.cep %]
-    </p>
-    <p>
-     <b class="title">Cidade:</b> [% cliente.cidade %]
+     <b class="title">Quantidade:</b> [% produto.quant %]
     </p>
     <br />
   </div>
@@ -36,4 +18,4 @@
 
 <hr>
 
-<p><a class="btn btn-primary" href="[% c.uri_for('') %]">Listar clientes</a></p>
+<p><a class="btn btn-primary" href="[% c.uri_for('') %]">Listar produtos</a></p>
