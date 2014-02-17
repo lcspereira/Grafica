@@ -5,7 +5,7 @@ use Try::Tiny;
 use Grafica::Form::Pedido;
 use feature qw(switch);
 
-has 'pedidoForm' => (
+has 'pedido_form' => (
     isa     => 'Grafica::Form::Pedido',
     is      => 'rw',
     lazy    => 1,
@@ -52,22 +52,28 @@ sub index :Path :Args(0) {
     );
 }
 
-=head2 editar
+=head2 novoPedido
 
-Carrega formulário de pedido.
+Inicializa novo pedido
 
 =cut
 
-sub editar :Local Args(0){
+sub novoPedido :Path Args() {
     my ( $self, $c, $id_pedido) = @_;
     my $produto;
     my @produtos;
     my $pedido;
     my @clientes;
     my $validate;
+    my $form = $self->pedido_form->run (
+        params => $c->req->params,
+        name   => 'formPedido',
+        item   => $c->model('DB::Pedido')->new({}),
+    );
     $c->stash (
         current_view => 'TT',
-        template     => 'pedidos/editar.tt2'
+        template     => 'pedidos/edit.tt2',
+        form         => $form
     );
     #return unless $form->validated;
 }

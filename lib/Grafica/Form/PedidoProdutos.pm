@@ -18,20 +18,25 @@ has '+item_class'        => (
     default => 'Grafica::DB::Result::Pedido' 
 );
 
-has_field 'cliente'      => (
-    label            => 'Cliente: ',
-    type             => 'Select',
-    required         => 1,
-    required_message => 'Por favor, selecione um cliente.',
-    empty_select     => '-- Selecione o cliente -- ',
+has_field 'produto'      => (
+    label         => "Adicionar produto: ",
+    type          => 'Select',
+    empty_select  => '-- Selecione o produto --', 
 );
 
-has_field 'data_entrega' => ( 
-    label            => 'Data de entrega: ',
-    type             => 'Date', 
-    format           => 'dd/mm/yyyy',
-    required         => 1, 
-    required_message => 'Por favor, informe a data de entrega.'
+has_field 'quantidade' => (
+    label => 'Quantidade: ',
+    type  => 'Integer',
+);
+
+has_field 'subtotal'     => ( 
+    label                 => 'Subtotal: ',
+    type                  => 'Float',
+    precision             => 2,
+    decimal_symbol        => '.',
+    decimal_symbol_for_db => '.',
+    required              => 1,
+    value                 => 0,
 );
 
 
@@ -41,13 +46,14 @@ has_field 'submit'       => (
     element_class => ['btn', 'btn-primary'],
 );
 
-sub options_cliente {
+sub options_produto {
     my $self = shift;
     return unless $self->schema;
-    my @clientes     = $self->schema->resultset('Cliente')->all;
-    my @opt_clientes = map { { value => $_->id, label => $_->nome } } @clientes;
-    return @opt_clientes;
+    my @produtos     = $self->schema->resultset('Produto')->all;
+    my @opt_produtos = map { { value => $_->id, label => $_->descr } } @produtos;
+    return @opt_produtos;
 }
 
 no HTML::FormHandler::Moose;
 1;
+
