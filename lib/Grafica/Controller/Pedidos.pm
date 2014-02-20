@@ -58,13 +58,9 @@ Inicializa novo pedido
 
 =cut
 
-sub novoPedido :Path Args() {
+sub novoPedido :Local Args(0) {
     my ( $self, $c, $id_pedido) = @_;
-    my $produto;
-    my @produtos;
     my $pedido;
-    my @clientes;
-    my $validate;
     my $form = $self->pedido_form->run (
         params => $c->req->params,
         name   => 'formPedido',
@@ -75,7 +71,25 @@ sub novoPedido :Path Args() {
         template     => 'pedidos/edit.tt2',
         form         => $form
     );
-    #return unless $form->validated;
+    return unless $form->validated;
+}
+
+=head2 cancelar
+
+=cut
+
+sub produtos :Path('novoPedido/produtos') Args(0) {
+    my ($self, $c) = @_;
+    $c->res->body ("produtos");
+}
+
+=head2 cancelar
+
+=cut
+
+sub total :Path('novoPedido/total') Args(0) {
+    my ($self, $c) = @_;
+    $c->res->body ("total");
 }
 
 =head2 cancelar
