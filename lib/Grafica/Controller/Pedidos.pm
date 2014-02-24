@@ -2,6 +2,7 @@ package Grafica::Controller::Pedidos;
 use Moose;
 use namespace::autoclean;
 use Try::Tiny;
+use Storable;
 use Grafica::Form::Pedido;
 use feature qw(switch);
 
@@ -59,10 +60,11 @@ Inicializa novo pedido
 =cut
 
 sub novoPedido :Local Args(0) {
-    my ( $self, $c, $id_pedido) = @_;
+    my ( $self, $c ) = @_;
     my $pedido;
-    my $form = $self->pedido_form->run (
-        params => $c->req->params,
+    my $params = $c->req->params;
+    my $form   = $self->pedido_form->run (
+        params => $params,
         name   => 'formPedido',
         item   => $c->model('DB::Pedido')->new({}),
     );
@@ -72,22 +74,27 @@ sub novoPedido :Local Args(0) {
         form         => $form
     );
     return unless $form->validated;
+    $c->session->{'pedido'} = {
+        cliente      => $params->{'cliente'},
+        data_entrega => $params->{'data_entrega'}
+    };
+    $c->res->redirect ($c->uri_for ('novoPedido/produtos');
 }
 
-=head2 cancelar
+=head2 produtosPedido
 
 =cut
 
-sub produtos :Path('novoPedido/produtos') Args(0) {
-    my ($self, $c) = @_;
+sub produtosPedido :Path('novoPedido/produtos') Args(0) {
+    my ($self, $c)          = @_;
     $c->res->body ("produtos");
 }
 
-=head2 cancelar
+=head2 totalPedido
 
 =cut
 
-sub total :Path('novoPedido/total') Args(0) {
+sub totalPedido :Path('novoPedido/total') Args(0) {
     my ($self, $c) = @_;
     $c->res->body ("total");
 }
