@@ -6,12 +6,30 @@ use Storable;
 use Grafica::Form::Pedido;
 use feature qw(switch);
 
+# Formulário inicial de pedido
 has 'pedido_form' => (
     isa     => 'Grafica::Form::Pedido',
     is      => 'rw',
     lazy    => 1,
     default => sub { Grafica::Form::Pedido->new }
 );
+
+# Formulário de seleção de produtos do pedido
+has 'pedido_produtos_form' => (
+    isa     => 'Grafica::Form::Pedido',
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { Grafica::Form::Pedido->new }
+);
+
+# Formulário de total do pedido.
+has 'pedido_total_form' => (
+    isa     => 'Grafica::Form::Pedido',
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { Grafica::Form::Pedido->new }
+);
+
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -53,20 +71,23 @@ sub index :Path :Args(0) {
     );
 }
 
-=head2 novoPedido
+=head2 novo_pedido
 
 Inicializa novo pedido
 
 =cut
 
-sub novoPedido :Local Args(0) {
+sub novo_pedido :Local Args(0) {
     my ( $self, $c ) = @_;
-    my $pedido;
+    my $pedido = $c->model('DB::Pedido')->new ({});
     my $params = $c->req->params;
-    my $form   = $self->pedido_form->run (
+    my $form;
+
+    $c->session->{'pedido_model'} = $pedido;
+    $form = $self->pedido_form->run (
         params => $params,
         name   => 'formPedido',
-        item   => $c->model('DB::Pedido')->new({}),
+        item   => $pedido,
     );
     $c->stash (
         current_view => 'TT',
@@ -74,29 +95,65 @@ sub novoPedido :Local Args(0) {
         form         => $form
     );
     return unless $form->validated;
-    $c->session->{'pedido'} = {
+    $c->session->{'pedido_dados'} = {
         cliente      => $params->{'cliente'},
         data_entrega => $params->{'data_entrega'}
     };
-    $c->res->redirect ($c->uri_for ('novoPedido/produtos');
+    $c->res->redirect ($c->uri_for ('novoPedido', 'produtos'));
 }
 
-=head2 produtosPedido
+=head2 produtos_pedido
 
 =cut
 
-sub produtosPedido :Path('novoPedido/produtos') Args(0) {
-    my ($self, $c)          = @_;
-    $c->res->body ("produtos");
-}
-
-=head2 totalPedido
-
-=cut
-
-sub totalPedido :Path('novoPedido/total') Args(0) {
+sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
     my ($self, $c) = @_;
-    $c->res->body ("total");
+    my $params     = $c->req->params;
+    my $produto;
+    my @produtos   = $c->session->{'pedido_dados'}->{'produtos'};
+    my $form = $self->pedido_produtos_form->run (
+        params => $params,
+        name   => 'formPedidoProdutos',
+        item   => $c->session->{'pedido_model'},
+    );
+    return unless $form->validated;
+    $c->res->redirect ($c->uri_for ('novoPedido', 'add'));
+}
+
+=head2 add_produto_pedido
+
+=cut
+
+sub add_produto_pedido :Path('novoPedido/add') Args(0) {
+    my ($self, $c) = @_;
+    my @produtos = $c->session->{'pedido_dados'}->{'produtos'};
+    push (@produtos, { 
+        produto    => $params->{'produto'}, 
+        quantidade => $params->{'quantidade'}
+    });
+    $c->session->{'pedido_dados'}->{'produtos'}  = \@produtos;
+    $c->session->{'pedido_dados'}->{'subtotal'} += $
+
+}
+
+=head2 rem_produto_pedido
+
+=cut
+
+sub total_pedido :Path('novoPedido/total') Args(0) {
+    my ($self, $c) = @_;
+    
+}
+
+
+
+=head2 total_pedido
+
+=cut
+
+sub total_pedido :Path('novoPedido/total') Args(0) {
+    my ($self, $c) = @_;
+    
 }
 
 =head2 cancelar
