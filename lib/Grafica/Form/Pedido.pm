@@ -29,7 +29,7 @@ has_field 'cliente'      => (
 has_field 'data_entrega' => ( 
     label            => 'Data de entrega: ',
     type             => 'Date', 
-    format           => 'dd/mm/yyyy',
+    format           => 'dd/mm/yy',
     required         => 1, 
     required_message => 'Por favor, informe a data de entrega.'
 );

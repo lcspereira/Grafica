@@ -49,7 +49,7 @@ __PACKAGE__->config(
 );
 
 __PACKAGE__->config->{'session'} = {
-    expires => 3600,
+    expires => 43200,
     rewrite => 1,
     storage => 'c:\\windows\\temp\\session',
 };

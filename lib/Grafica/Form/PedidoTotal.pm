@@ -2,7 +2,7 @@
 # Using following commandline:
 # form_generator.pl --rs_name=Grafica::DB::Result::Pedido --schema_name=Grafica::DB --db_dsn=dbi:Pg:dbname=grafica
 
-package Grafica::Form::Pedido;
+package Grafica::Form::PedidoTotal;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 

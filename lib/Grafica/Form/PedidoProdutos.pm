@@ -2,7 +2,7 @@
 # Using following commandline:
 # form_generator.pl --rs_name=Grafica::DB::Result::Pedido --schema_name=Grafica::DB --db_dsn=dbi:Pg:dbname=grafica
 
-package Grafica::Form::Pedido;
+package Grafica::Form::PedidoProdutos;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
@@ -26,17 +26,7 @@ has_field 'produto'      => (
 
 has_field 'quantidade' => (
     label => 'Quantidade: ',
-    type  => 'Integer',
-);
-
-has_field 'subtotal'     => ( 
-    label                 => 'Subtotal: ',
-    type                  => 'Float',
-    precision             => 2,
-    decimal_symbol        => '.',
-    decimal_symbol_for_db => '.',
-    required              => 1,
-    value                 => 0,
+    type  => 'Float',
 );
 
 
@@ -50,7 +40,7 @@ sub options_produto {
     my $self = shift;
     return unless $self->schema;
     my @produtos     = $self->schema->resultset('Produto')->all;
-    my @opt_produtos = map { { value => $_->id, label => $_->descr } } @produtos;
+    my @opt_produtos = map { { value => $_->id, label => join (' - ', ($_->descr, 'R$ ' . $_->preco)) } } @produtos;
     return @opt_produtos;
 }
 
