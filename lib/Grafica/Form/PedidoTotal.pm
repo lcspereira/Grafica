@@ -19,37 +19,37 @@ has '+item_class'        => (
 );
 
 has_field 'subtotal'     => ( 
-    label                 => 'Subtotal: ',
+    label                 => 'Subtotal: R$ ',
     type                  => 'Float',
     precision             => 2,
     decimal_symbol        => '.',
     decimal_symbol_for_db => '.',
     required              => 1,
-    value                 => 0,
+    disabled              => 1,
 );
 
 has_field 'desconto'     => ( 
-    label                 => 'Desconto: ',
+    label                 => 'Desconto: R$ ',
     type                  => 'Float',    
     precision             => 2,
     decimal_symbol        => '.',
     decimal_symbol_for_db => '.',
-    value                 => 0,
+    default               => 0,
 );  
 
 has_field 'total'        => (
-    label                 => 'Total: ',
+    label                 => 'Total: R$',
     type                  => 'Float',     
     precision             => 2,
     decimal_symbol        => '.',
     decimal_symbol_for_db => '.',
     required              => 1,
-    value                 => 0,
+    default               => 0,
 );
 
 has_field 'submit'       => ( 
     type          => 'Submit',
-    value         => 'Incluir',
+    value         => 'Finalizar pedido',
     element_class => ['btn', 'btn-primary'],
 );
 

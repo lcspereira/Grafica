@@ -1,1 +1,39 @@
-[% form.render %] 
+[% USE format %]
+[% money = format('R$ %.2f') %]
+<div class="row-fluid">
+  <div class="page-header">
+    <h1>Resumo do pedido:</h1>
+  </div>
+</div>
+<h4>Cliente: [% pedido_dados.cliente.nome %]</h4><br/>
+<h4>Data de entrega: [% pedido_dados.data_entrega %]</h4><br/>
+<h4>Produtos:</h4><br/>
+<table id="pedidoProdutosTabela" class="table table-bordered table-striped tablesorter table-hover" summary="Lista de produtos do pedido.">
+  <thead>
+    <tr>
+      [% FOR coluna IN colunas %]
+          <th scope="col">[% coluna %]</th>
+      [% END %]
+    </tr>
+  </thead>
+  <tbody>
+    [% FOR produto IN pedido_dados.produtos %]
+        [% IF produto %]
+            <tr>
+                <td>[% produto.descr %]</td>
+                <td>[% produto.preco %]</td>
+                <td>[% produto.quantidade %]</td>
+            </tr>
+        [% END %]
+    [% END %]
+  </tbody>
+</table>
+<br/>
+[% form.render %]
+<script type='text/javascript'>
+    document.getElementById('desconto').onblur = function () {
+        // Calcula o total do pedido, e seta o campo total.
+        var total                              = document.getElementById('subtotal').value - document.getElementById('desconto').value;
+        document.getElementById('total').value = total.toFixed (2);
+    }
+</script>

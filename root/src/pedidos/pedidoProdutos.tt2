@@ -15,21 +15,24 @@
     </tr>
   </thead>
   <tbody>
-    [% FOR produto IN c.session.pedido_dados.produtos %]
+    [% FOR produto IN produtos %]
+        [% IF produto %]
             <tr>
                 <td>[% produto.descr %]</td>
                 <td>[% produto.preco %]</td>
                 <td>[% produto.quantidade %]</td>
                 <td>
                     <div class="btn-group">
-                        <a class="btn btn-mini" href="[% c.uri_for ('excluir', cliente.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
+                        <a class="btn btn-mini" href="[% c.uri_for ('novoPedido', 'rem', produto.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
                     </div>
                 </td>
             </tr>
+        [% END %]
     [% END %]
   </tbody>
 </table>
 
-<br/>Subtotal: [% money(c.session.pedido_dados.subtotal) %]<br/>
+<br/><h3>Subtotal: [% money(c.session.pedido_dados.subtotal) %]</h3><br/>
 
-[% form.render %] 
+[% form.render %]
+<center><a class="btn btn-primary btn-large" href="[% c.uri_for ('novoPedido', 'total') %]">Fechar pedido</a></center>

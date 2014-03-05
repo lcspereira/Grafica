@@ -87,7 +87,6 @@ sub novo_pedido :Path('novoPedido') Args(0) {
     my $params = $c->req->params;
     my $pedido = $c->model('DB::Pedido')->new({});
     my $form;
-
     $form = $self->pedido_form->run (
         params    => $params,
         name      => 'formPedido',
@@ -101,8 +100,12 @@ sub novo_pedido :Path('novoPedido') Args(0) {
     );
     return unless $form->validated;
     $c->session->{'pedido_dados'} = {
-        cliente      => $params->{'cliente'},
-        data_entrega => $params->{'data_entrega'}
+        cliente      => {
+            id   => $params->{'cliente'},
+            nome => $c->model('DB::Cliente')->find($params->{'cliente'})->nome,
+        },
+        data_entrega => $params->{'data_entrega'},
+        produtos     => [],
     };
     $c->res->redirect ($c->uri_for ('novoPedido', 'produtos'));
 }
@@ -116,7 +119,7 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
     my $params     = $c->req->params;
     my $pedido     = $c->model('DB::Pedido')->new({});
     my $produto;
-    my @produtos   = $c->session->{'pedido_dados'}->{'produtos'};
+    my @produtos   = @{$c->session->{'pedido_dados'}->{'produtos'}};
     my $form = $self->pedido_produtos_form->run (
         params    => $params,
         name      => 'formPedidoProdutos',
@@ -128,7 +131,7 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
         template     => 'pedidos/pedidoProdutos.tt2',
         form         => $form,
         colunas      => [ 'Produto', 'Preço (R$)', 'Quantidade' ],
-        
+        produtos     => \@produtos,
     );
     return unless $form->validated;
     $c->flash->{'form_params'} = $params;
@@ -140,17 +143,18 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
 =cut
 
 sub add_produto_pedido :Path('novoPedido/add') Args(0) {
-    my ($self, $c) = @_;
-    my $params     = $c->flash->{'form_params'};
-    my $produto    = $c->model('DB::Produto')->find($params->{'produto'});
-    my @produtos   = $c->session->{'pedido_dados'}->{'produtos'} || ();
-    push (@produtos, { 
+    my ($self, $c)      = @_;
+    my $params          = $c->flash->{'form_params'};
+    my $produto         = $c->model('DB::Produto')->find($params->{'produto'});
+    my @produtos_pedido = @{$c->session->{'pedido_dados'}->{'produtos'}};
+
+    push (@produtos_pedido, { 
         id         => $produto->id,
         descr      => $produto->descr,
         preco      => $produto->preco,
         quantidade => $params->{'quantidade'},
     });
-    $c->session->{'pedido_dados'}->{'produtos'}  = \@produtos;
+    $c->session->{'pedido_dados'}->{'produtos'}  = \@produtos_pedido;
     $c->session->{'pedido_dados'}->{'subtotal'} += $produto->preco * $params->{'quantidade'};
     $c->res->redirect ($c->uri_for ('novoPedido', 'produtos'));
 } 
@@ -161,17 +165,16 @@ sub add_produto_pedido :Path('novoPedido/add') Args(0) {
 
 sub rem_produto_pedido :Path('novoPedido/rem') Args(1) {
     my ($self, $c, $id_produto) = @_;    
-    my @produtos                = $c->session->{'pedido_dados'}->{'produtos'};
+    my @produtos_pedido         = @{$c->session->{'pedido_dados'}->{'produtos'}};
     my $produto;
 
-    for (0..length (@produtos)) {
-        $produto = splice (@produtos, $_) if ($produtos[$_]->{'produto'} == $id_produto);
+    for (0..$#produtos_pedido) {
+        $produto = splice (@produtos_pedido, $_, 1) if ($produtos_pedido[$_] && $produtos_pedido[$_]->{'id'} == $id_produto);
     }
-        
-    $c->session->{'pedido_dados'}->{'produtos'}  = \@produtos;
+
+    $c->session->{'pedido_dados'}->{'produtos'}  = \@produtos_pedido;
     $c->session->{'pedido_dados'}->{'subtotal'} -= $produto->{'preco'} * $produto->{'quantidade'};
     $c->res->redirect ($c->uri_for ('novoPedido', 'produtos'));
-
 }
 
 
@@ -181,8 +184,69 @@ sub rem_produto_pedido :Path('novoPedido/rem') Args(1) {
 =cut
 
 sub total_pedido :Path('novoPedido/total') Args(0) {
-    my ($self, $c) = @_;
-    
+    my ($self, $c)   = @_;
+    my $params       = $c->req->params;
+    my $pedido       = $c->model('DB::Pedido')->new({});
+    my $pedido_dados = $c->session->{'pedido_dados'};
+    my $form         = $self->pedido_total_form->run (
+        params            => $params,
+        name              => 'formPedidoTotal',
+        item              => $pedido,
+        no_update         => 1,
+        update_field_list => {
+            subtotal => {
+                default => sprintf ("%.2f", $pedido_dados->{'subtotal'}),
+            },
+        },
+    );
+    $c->stash (
+        current_view => 'TT',
+        template     => 'pedidos/pedidoTotal.tt2',
+        form         => $form,
+        colunas      => [ 'Produto', 'Preço (R$)', 'Quantidade' ],
+        pedido_dados => $pedido_dados,
+    );
+    return unless $form->validated;
+    $c->session->{'pedido_dados'}->{'desconto'} = $c->req->params->{'desconto'};
+    $c->session->{'pedido_dados'}->{'total'     = $c->req->params->{'total'};
+    $c->res->redirect ($c->uri_for ('novoPedido', 'create'));
+}
+
+
+=head2 criar_pedido
+
+=cut
+
+sub criar_pedido :Path('novoPedido/create') Args(0) {
+    my ( $self, $c )    = @_;
+    my $pedido_dados    = $c->session->{'pedido_dados'};
+    my $pedido;
+    my $pedido_produto;
+    my $produto;
+
+    try {
+        $c->model('DB')->txn_do (sub {
+            $pedido         = $c->model('DB::Pedido')->create ({
+                id_cliente   => $pedido_dados->{'cliente'}->{'id'},
+                data_entrega => $pedido_dados->{'data_entrega'},
+                subtotal     => $pedido_dados->{'subtotal'},
+                desconto     => $pedido_dados->{'desconto'},
+                total        => $pedido_dados->{'total'}
+             });
+            foreach $produto in ($pedido_dados->{'produtos'}) {
+                $pedido_produto =  $c->model('DB::PedidoProduto')->create ({
+                  id_pedido     => $pedido->id,
+                  id_cliente    => $pedido_dados->{'cliente'}->{'id'},
+                  id_produto    => $produto->{'id'},
+                  quant         => $produto->{'quant'},
+                });
+            }
+        });
+        $c->res->redirect ($c->uri_for (''));
+    } catch {
+        $c->flash->{'message'} = "Erro ao atualizar cliente: $_";
+        $c->res->redirect ($c->uri_for (''));
+    };
 }
 
 =head2 cancelar
