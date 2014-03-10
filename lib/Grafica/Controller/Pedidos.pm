@@ -60,11 +60,11 @@ sub index :Path :Args(0) {
     my @pedidos;
     my @colunas;
     my $err;
+    
     $c->stash (
         current_view => 'TT',
         template     => 'welcome.tt2'
     );
-
     @pedidos = $c->model('DB::Pedido')->search({
                 status => 1,
                 status => 3
@@ -84,21 +84,35 @@ Inicializa novo pedido
 
 sub novo_pedido :Path('novoPedido') Args(0) {
     my ( $self, $c ) = @_;
-    my $params = $c->req->params;
-    my $pedido = $c->model('DB::Pedido')->new({});
-    my $form;
-    $form = $self->pedido_form->run (
+    my $params   = $c->req->params;
+    my $pedido   = $c->model('DB::Pedido')->new({});
+    my $form_opt = {
         params    => $params,
         name      => 'formPedido',
         item      => $pedido,
         no_update => 1, # Impede inserção no banco de dados.
-    );
+    };
+    my $form;
+
+    if ($c->session->{'pedido_dados'}) {
+        $form_opt->{'update_field_list'} = {
+            cliente      => {
+                default => $c->session->{'pedido_dados'}->{'cliente'}->{'id'},
+            },
+            data_entrega => {
+                default => $c->session->{'pedido_dados'}->{'data_entrega'},
+            },
+        };
+    }
+
+    $form = $self->pedido_form->run ($form_opt);
     $c->stash (
         current_view => 'TT',
         template     => 'pedidos/novoPedido.tt2',
         form         => $form
     );
     return unless $form->validated;
+    
     $c->session->{'pedido_dados'} = {
         cliente      => {
             id   => $params->{'cliente'},
@@ -126,6 +140,7 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
         item      => $pedido,
         no_update => 1,
     );
+
     $c->stash (
         current_view => 'TT',
         template     => 'pedidos/pedidoProdutos.tt2',
@@ -134,6 +149,7 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
         produtos     => \@produtos,
     );
     return unless $form->validated;
+    
     $c->flash->{'form_params'} = $params;
     $c->res->redirect ($c->uri_for ('novoPedido', 'add'));
 }
@@ -154,6 +170,7 @@ sub add_produto_pedido :Path('novoPedido/add') Args(0) {
         preco      => $produto->preco,
         quantidade => $params->{'quantidade'},
     });
+    
     $c->session->{'pedido_dados'}->{'produtos'}  = \@produtos_pedido;
     $c->session->{'pedido_dados'}->{'subtotal'} += $produto->preco * $params->{'quantidade'};
     $c->res->redirect ($c->uri_for ('novoPedido', 'produtos'));
@@ -207,6 +224,7 @@ sub total_pedido :Path('novoPedido/total') Args(0) {
         pedido_dados => $pedido_dados,
     );
     return unless $form->validated;
+
     $c->session->{'pedido_dados'}->{'desconto'} = $c->req->params->{'desconto'};
     $c->session->{'pedido_dados'}->{'total'     = $c->req->params->{'total'};
     $c->res->redirect ($c->uri_for ('novoPedido', 'create'));
@@ -218,8 +236,8 @@ sub total_pedido :Path('novoPedido/total') Args(0) {
 =cut
 
 sub criar_pedido :Path('novoPedido/create') Args(0) {
-    my ( $self, $c )    = @_;
-    my $pedido_dados    = $c->session->{'pedido_dados'};
+    my ( $self, $c ) = @_;
+    my $pedido_dados = $c->session->{'pedido_dados'};
     my $pedido;
     my $pedido_produto;
     my $produto;
@@ -233,6 +251,10 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
                 desconto     => $pedido_dados->{'desconto'},
                 total        => $pedido_dados->{'total'}
              });
+
+            # Relaciona os produtos com o pedido
+            # e os insere no banco de dados.
+
             foreach $produto in ($pedido_dados->{'produtos'}) {
                 $pedido_produto =  $c->model('DB::PedidoProduto')->create ({
                   id_pedido     => $pedido->id,
@@ -242,10 +264,12 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
                 });
             }
         });
+        $c->flash->{'message'} = "Pedido " . $pedido->id . " cadastrado com sucesso.";
+        undef ($c->session->{'pedido_dados'});
         $c->res->redirect ($c->uri_for (''));
     } catch {
-        $c->flash->{'message'} = "Erro ao atualizar cliente: $_";
-        $c->res->redirect ($c->uri_for (''));
+        $c->flash->{'message'} = "Erro ao atualizar pedido: $_";
+        $c->res->redirect ($c->uri_for ('novoPedido', 'total'));
     };
 }
 
@@ -253,8 +277,18 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
 
 =cut
 
-sub cancelar :Local Args(0) {
-    my ( $self, $c ) = @_;
+sub cancelar :Local Args(1) {
+    my ( $self, $c, $id_pedido ) = @_;
+    try {
+        $c->model('DB::Pedido')->find($id_pedido)->update ({
+           status => 2, 
+        });
+        $c->flash->{'message'} = "Pedido " . $pedido->id . " cancelado.";
+        $c->res->redirect ($c->uri_for (''));
+    } catch {
+        $c->flash->{'message'} = "Erro ao cancelar pedido: $_";
+        $c->res->redirect ($c->uri_for (''));
+    };
 }
 
 =head2 detalhes
@@ -264,8 +298,8 @@ sub cancelar :Local Args(0) {
 sub detalhes :Local Args(1) {
     my ( $self, $c, $id_pedido ) = @_;
     $c->stash (
-    	pedido   => $c->model('DB::Pedido')->find($id_pedido),
-    	template => 'src/details.tt2'
+    	  pedido   => $c->model('DB::Pedido')->find ($id_pedido),
+    	  template => 'src/details.tt2'
     );
 }
 

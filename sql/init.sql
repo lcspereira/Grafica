@@ -33,7 +33,8 @@ BEGIN;
     DESCR Varchar(1000) NOT NULL,
     PRECO Decimal(6,2) NOT NULL,
     QUANT Float,
-    CONSTRAINT id_produto_pk PRIMARY KEY (ID)
+    CONSTRAINT id_produto_pk PRIMARY KEY (ID),
+    CONSTRAINT quant_check CHECK (quant > 0)
   );
   
   CREATE INDEX descr_idx ON produto USING btree (descr varchar_pattern_ops);
