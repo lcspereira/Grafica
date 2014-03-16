@@ -44,14 +44,16 @@ sub index :Path() :Args(0) {
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'template'}     = 'clientes/index.tt2';
     if ($params->{'nome'}) {
-        $c->stash->{'cliente'} = $c->model->('DB::Cliente')->search({
+        @clientes = $c->model->('DB::Cliente')->search({
             nome => $params->{'nome'}
         });
     } else {
-        $c->stash->{'clientes'} = [ $c->model('DB::Cliente')->all ];
+        @clientes = $c->model('DB::Cliente')->all;
     }
-    @colunas               = ('Nome', 'Endereço', 'Telefone', 'E-mail');
-    $c->stash->{'colunas'} = \@colunas;
+    @colunas                    = ('Nome', 'Endereço', 'Telefone', 'E-mail');
+    $c->stash->{'clientes'}     = \@clientes;
+    $c->stash->{'colunas'}      = \@colunas;
+    $c->stash->{'num_clientes'} = scalar (@clientes);
 }
 
 =head2 editar

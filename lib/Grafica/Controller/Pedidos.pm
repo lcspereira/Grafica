@@ -226,7 +226,7 @@ sub total_pedido :Path('novoPedido/total') Args(0) {
     return unless $form->validated;
 
     $c->session->{'pedido_dados'}->{'desconto'} = $c->req->params->{'desconto'};
-    $c->session->{'pedido_dados'}->{'total'     = $c->req->params->{'total'};
+    $c->session->{'pedido_dados'}->{'total'}    = $c->req->params->{'total'};
     $c->res->redirect ($c->uri_for ('novoPedido', 'create'));
 }
 
@@ -255,7 +255,7 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
             # Relaciona os produtos com o pedido
             # e os insere no banco de dados.
 
-            foreach $produto in ($pedido_dados->{'produtos'}) {
+            foreach $produto ($pedido_dados->{'produtos'}) {
                 $pedido_produto =  $c->model('DB::PedidoProduto')->create ({
                   id_pedido     => $pedido->id,
                   id_cliente    => $pedido_dados->{'cliente'}->{'id'},
@@ -283,7 +283,7 @@ sub cancelar :Local Args(1) {
         $c->model('DB::Pedido')->find($id_pedido)->update ({
            status => 2, 
         });
-        $c->flash->{'message'} = "Pedido " . $pedido->id . " cancelado.";
+        $c->flash->{'message'} = "Pedido " . $id_pedido . " cancelado.";
         $c->res->redirect ($c->uri_for (''));
     } catch {
         $c->flash->{'message'} = "Erro ao cancelar pedido: $_";

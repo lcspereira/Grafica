@@ -14,7 +14,7 @@
 
 <div class="row-fluid">
   <div class="page-header">
-    <h3>Estoque</h3>
+    <h3>Estoque<small>([% num_produtos %])</h3>
   </div>
 </div>
 

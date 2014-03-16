@@ -36,10 +36,12 @@ Controller que representa o módulo Estoque.
 sub index :Path :Args(0) {
     my ( $self, $c )            = @_;
     my @colunas                 = ('Produto', 'Preço', 'Quantidade');
+    my @produtos                = $c->model('DB::Produto')->all; 
     $c->stash->{'current_view'} = 'TT';
-    $c->stash->{'produtos'}     = [ $c->model('DB::Produto')->all ];
+    $c->stash->{'produtos'}     = \@produtos;
     $c->stash->{'colunas'}      = \@colunas;
     $c->stash->{'template'}     = 'estoque/index.tt2';
+    $c->stash->{'num_produtos'} = scalar (@produtos);
 
 }
 

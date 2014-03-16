@@ -35,5 +35,5 @@
         // Calcula o total do pedido, e seta o campo total.
         var total                              = document.getElementById('subtotal').value - document.getElementById('desconto').value;
         document.getElementById('total').value = total.toFixed (2);
-    }
+    };
 </script>
