@@ -2,12 +2,12 @@ package Grafica::Controller::Pedidos;
 use Moose;
 use namespace::autoclean;
 use Try::Tiny;
-use Storable;
 use Data::Printer;
 use Grafica::Form::Pedido;
 use Grafica::Form::PedidoProdutos;
 use Grafica::Form::PedidoTotal;
 use HTML::FormHandler;
+
 use utf8;
 use feature qw(switch);
 
@@ -84,9 +84,9 @@ Inicializa novo pedido
 
 sub novo_pedido :Path('novoPedido') Args(0) {
     my ( $self, $c ) = @_;
-    my $params   = $c->req->params;
-    my $pedido   = $c->model('DB::Pedido')->new({});
-    my $form_opt = {
+    my $params       = $c->req->params;
+    my $pedido       = $c->model('DB::Pedido')->new({});
+    my $form_opt     = {
         params    => $params,
         name      => 'formPedido',
         item      => $pedido,
@@ -104,7 +104,6 @@ sub novo_pedido :Path('novoPedido') Args(0) {
             },
         };
     }
-
     $form = $self->pedido_form->run ($form_opt);
     $c->stash (
         current_view => 'TT',
@@ -134,7 +133,7 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
     my $pedido     = $c->model('DB::Pedido')->new({});
     my $produto;
     my @produtos   = @{$c->session->{'pedido_dados'}->{'produtos'}};
-    my $form = $self->pedido_produtos_form->run (
+    my $form       = $self->pedido_produtos_form->run (
         params    => $params,
         name      => 'formPedidoProdutos',
         item      => $pedido,
