@@ -43,7 +43,7 @@ has_field 'submit'       => (
 
 sub options_cliente {
     my $self = shift;
-    return unless $self->schema;
+    return unless $self->schema;i
     my @clientes     = $self->schema->resultset('Cliente')->all;
     my @opt_clientes = map { { value => $_->id, label => $_->nome } } @clientes;
     return @opt_clientes;
