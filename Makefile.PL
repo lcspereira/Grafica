@@ -16,7 +16,15 @@ requires 'Catalyst::Action::RenderView';
 requires 'Moose';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
-                 # See Catalyst::Plugin::ConfigLoader for supported formats
+                            # See Catalyst::Plugin::ConfigLoader for supported formats
+requires 'Catalyst::Plugin::RequireSSL';
+requires 'HTML::FormHandler::TraitFor::Model::DBIC';
+requires 'DBD::Pg';
+requires 'HTML::FormHandler::Model::DBIC';
+requires 'Data::Printer';
+requires 'MooseX::MarkAsMethods';
+requires 'MooseX::NonMoose';  
+
 test_requires 'Test::More' => '0.88';
 catalyst;
 
