@@ -59,21 +59,19 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
     my @pedidos;
     my @colunas;
-    my $err;
-    $c->stash (
-        current_view => 'TT',
-        template     => 'welcome.tt2'
-    );
+    $c->stash->{'current_view'} = 'TT';
+    $c->stash->{'template'}     = 'pedidos/index.tt2';
 
-    @pedidos = $c->model('DB::Pedido')->search({
-                status => 1,
-                status => 3
-           });
-    @colunas = ("Código", "Data da encomenda", "Data de entrega", "Total", "Status");
-    $c->stash (
-        pedidos      => \@pedidos,
-        colunas      => \@colunas
-    );
+    @pedidos                    = $c->model('DB::Pedido')->search({},
+    {
+        join => 'cliente',
+        join => 'status',
+    });
+    
+    @colunas                    = ("Código", "Cliente", "Data da encomenda", "Data de entrega", 'Total (R$)', "Status");
+    $c->stash->{'pedidos'}      = \@pedidos;
+    $c->stash->{'colunas'}      = \@colunas;
+    $c->stash->{'num_pedidos'} = scalar (@pedidos);
 }
 
 =head2 novo_pedido
@@ -224,7 +222,7 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
     my $pedido_produto;
     my $produto;
 
-    try {
+    #try {
         $c->model('DB')->txn_do (sub {
             $pedido         = $c->model('DB::Pedido')->create ({
                 id_cliente   => $pedido_dados->{'cliente'}->{'id'},
@@ -232,29 +230,42 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
                 subtotal     => $pedido_dados->{'subtotal'},
                 desconto     => $pedido_dados->{'desconto'},
                 total        => $pedido_dados->{'total'}
-             });
-            foreach $produto ($pedido_dados->{'produtos'}) {
-                $pedido_produto =  $c->model('DB::PedidoProduto')->create ({
-                  id_pedido     => $pedido->id,
-                  id_cliente    => $pedido_dados->{'cliente'}->{'id'},
-                  id_produto    => $produto->{'id'},
-                  quant         => $produto->{'quant'},
-                });
+            });
+            foreach $produto (@{$pedido_dados->{'produtos'}}) {
+                if ($produto) {
+                    $pedido_produto = $c->model('DB::PedidoProduto')->create ({
+                    id_pedido     => $pedido->id,
+                    id_cliente    => $pedido_dados->{'cliente'}->{'id'},
+                    id_produto    => $produto->{'id'},
+                    quant         => $produto->{'quantidade'}
+                  });
+                }
             }
         });
+        $c->flash->{'message'} = "Pedido " . $pedido->id . " criado com sucesso.";
         $c->res->redirect ($c->uri_for (''));
-    } catch {
-        $c->flash->{'message'} = "Erro ao atualizar cliente: $_";
-        $c->res->redirect ($c->uri_for (''));
-    };
+    #} catch {
+        #$c->flash->{'message'} = "Erro ao criar pedido: $_";
+        #$c->res->redirect ($c->uri_for (''));
+    #};
 }
 
 =head2 cancelar
 
 =cut
 
-sub cancelar :Local Args(0) {
-    my ( $self, $c ) = @_;
+sub cancelar :Local Args(1) {
+    my ( $self, $c, $id_pedido ) = @_;
+    try {
+        $c->model('DB::Pedido')->find($id_pedido)->update ({
+            status => 2,
+        });
+        $c->flash->{'message'} = "Pedido $id_pedido cancelado.";
+        $c->res->redirect ($c->uri_for (''));
+    } catch {
+        $c->flash->{'message'} = "Erro ao cancelar pedido: $_";
+        $c->res->redirect ($c->uri_for (''));
+    };
 }
 
 =head2 detalhes

@@ -1,6 +1,6 @@
 <div class="row-fluid">
   <div class="page-header">
-    :<h3>Clientes<small>([% num_clientes %])</h3>
+    <h3>Clientes<small>([% num_clientes %])</h3>
   </div>
 </div>
 [% IF c.flash.message.match ('^Erro') %]
