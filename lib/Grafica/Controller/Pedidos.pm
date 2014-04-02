@@ -222,7 +222,7 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
     my $pedido_produto;
     my $produto;
 
-    #try {
+    try {
         $c->model('DB')->txn_do (sub {
             $pedido         = $c->model('DB::Pedido')->create ({
                 id_cliente   => $pedido_dados->{'cliente'}->{'id'},
@@ -244,10 +244,10 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
         });
         $c->flash->{'message'} = "Pedido " . $pedido->id . " criado com sucesso.";
         $c->res->redirect ($c->uri_for (''));
-    #} catch {
-        #$c->flash->{'message'} = "Erro ao criar pedido: $_";
-        #$c->res->redirect ($c->uri_for (''));
-    #};
+    } catch {
+        $c->flash->{'message'} = "Erro ao criar pedido: $_";
+        $c->res->redirect ($c->uri_for (''));
+    };
 }
 
 =head2 cancelar
@@ -274,16 +274,20 @@ sub cancelar :Local Args(1) {
 
 sub detalhes :Local Args(1) {
     my ( $self, $c, $id_pedido ) = @_;
-    $c->stash (
-      pedido   => $c->model('DB::Pedido')->find($id_pedido),
-      template => 'src/details.tt2'
-    );
+    my $pedido                   = $c->model('DB::Pedido')->find ({ id => $id_pedido });
+    my $pedido_produto           = [ $c->model('DB::PedidoProduto')->search ({
+        id_pedido => $id_pedido
+    }) ];
+    p ($pedido_produto);
+    $c->stash->{'pedido'}        = $pedido;
+    $c->stash->{'template'}      = 'pedidos/details.tt2';
+    $c->stash->{'colunas'}       = [ 'Produto', 'Preço (R$)', 'Quantidade' ];
+    $c->stash->{'produtos'}      = $pedido_produto;
 }
 
 =encoding utf8
 
 =head1 AUTHOR
-
 Lucas Pereira,
 
 =head1 LICENSE

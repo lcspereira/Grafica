@@ -4,7 +4,7 @@
   <br/>
   <div class="span8">
     <p>
-     <b class="title">Cliente:</b> [% c.model('DB::Pedido').find(pedido.id_cliente).nome %]
+     <b class="title">Cliente:</b> [% pedido.id_cliente.nome %]
     </p>
     <p>
      <b class="title">Data da encomenda:</b> [% pedido.data_encomenda %]
@@ -32,14 +32,12 @@
           </tr>
         </thead>
         <tbody>
-          [% FOR produto IN pedido_produtos %]
-              [% IF produto %]
-                  <tr>
-                      <td>[% produto.descr %]</td>
-                      <td>[% produto.preco %]</td>
-                      <td>[% produto.quantidade %]</td>
-                  </tr>
-              [% END %]
+          [% FOR produto IN produtos.id_produto %]
+              <tr>
+                  <td>[% produto.descr %]</td>
+                  <td>[% produto.preco %]</td>
+                  <td>[% produto.quantidade %]</td>
+              </tr>
           [% END %]
         </tbody>
       </table>
