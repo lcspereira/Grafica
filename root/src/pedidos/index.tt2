@@ -1,3 +1,6 @@
+[% USE String %]
+[% USE date %]
+[% USE date (format = '%d/%m/%Y') %]
 <div class="row-fluid">
   <div class="page-header">
     <h3>Pedidos<small>([% num_pedidos %])</h3>
@@ -31,21 +34,27 @@
     [% FOR pedido IN pedidos %]
     <tr>
       <td>[% pedido.id %]</td>
-      <td>[% pedido.cliente.nome %]</td>
-      <td>[% pedido.data_encomenda %]</td>
-      <td>[% pedido.data_entrega %]</td>
+      <td>[% pedido.id_cliente.nome %]</td>
+      <td>[% date.format (pedido.data_encomenda) %]</td>
+      <td>[% date.format (pedido.data_entrega) %]</td>
       <td>[% pedido.total %]</td>
       <td>[% pedido.status.descr %]</td>
       <td>            
         <div class="btn-group">
-          <a class="btn btn-mini" href="[% c.uri_for ('detalhes', pedido.id) %]" rel="tooltip" title="Detalhes"><span class="glyphicon glyphicon-search"></span></a>
-          <a class="btn btn-mini" href="[% c.uri_for ('editar', pedido.id) %]" rel="tooltip" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
-          <a class="btn btn-mini" href="[% c.uri_for ('excluir', pedido.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
+            [% linkEditar   = String.new ("'pedidos/editar/") %]
+            [% linkEditar.append (pedido.id) %]
+            [% linkEditar.append ("'") %]
+            [% linkDetalhes = String.new ("'pedidos/detalhes/") %]
+            [% linkDetalhes.append (pedido.id) %]
+            [% linkDetalhes.append ("'") %]
+            <a class="btn btn-mini" rel="tooltip" title="Detalhes" onclick="window.open ([% linkDetalhes %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-search"></span></a>
+            <a class="btn btn-mini" rel="tooltip" title="Editar" onclick="window.open ([% linkEditar %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a class="btn btn-mini" href="[% c.uri_for ('excluir', pedido.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
         </div>
        </td>
     </tr>
     [% END %]
   </tbody>
 </table>
-<p><a class="btn btn-primary" href="[% c.uri_for ('novoPedido') %]">Criar pedido</a></p>
+<p><a class="btn btn-primary" onclick="window.open ('pedidos/novoPedido', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Criar pedido</a></p>
 </div>

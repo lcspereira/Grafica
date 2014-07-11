@@ -65,10 +65,11 @@ sub editar :Local :Args() {
         $c->flash->{'produto'} = $c->model('DB::Produto')->new({});
         $action                = $c->uri_for ('cadastrar');
     }
-    $form_opt{'item'}       = $c->flash->{'produto'};
-    $form                   = $self->produto_form->run (%form_opt);
-    $c->stash->{'form'}     = $form;
-    $c->stash->{'template'} = 'estoque/edit.tt2';
+    $c->stash->{'current_view'} = 'Popup';
+    $form_opt{'item'}           = $c->flash->{'produto'};
+    $form                       = $self->produto_form->run (%form_opt);
+    $c->stash->{'form'}         = $form;
+    $c->stash->{'template'}     = 'estoque/edit.tt2';
     return unless ($form->validated);
     $c->flash->{'form_params'} = $c->req->params;
     $c->res->redirect ($action);
@@ -84,6 +85,7 @@ sub cadastrar :Local :Args(0) {
     try {
         $produto->insert;
         $c->flash->{'message'} = "Produto " . $produto->id . " cadastrado com sucesso.";
+        $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
         $c->res->redirect ($c->uri_for (''));
     } catch {
         $c->flash->{'message'} = "Erro ao cadastrar produto: " . $_;
@@ -107,7 +109,7 @@ sub atualizar :Local :Args(0) {
             quant => $params->{'quant'}
         });
         $c->flash->{'message'} = "Produto " . $produto->id . " atualizado com sucesso.";
-        $c->res->redirect ($c->uri_for (''));
+        $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
     } catch {
         $c->flash->{'message'} = "Erro ao atualizar produto: $_";
         $c->res->redirect ($c->uri_for ('editar'));
@@ -136,8 +138,9 @@ sub excluir :Local :Args(1) {
 sub detalhes :Local :Args(1) {
     my ( $self, $c, $id_cliente ) = @_;
     $c->stash (
-        produto  => $c->model("DB::Produto")->find ($id_cliente),
-        template => 'estoque/details.tt2',
+        current_view => 'Popup',
+        produto      => $c->model("DB::Produto")->find ($id_cliente),
+        template     => 'estoque/details.tt2',
     );
 }
 

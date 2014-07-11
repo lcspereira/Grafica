@@ -4,6 +4,8 @@ use namespace::autoclean;
 use Grafica::Form::Cliente;
 use Try::Tiny;
 use Data::Printer;
+use JSON;
+
 use utf8;
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -77,6 +79,7 @@ sub editar :Local :Args() {
         name   => 'formCliente'
     ); # Opções para geração de formulário
     
+    $c->stash->{'current_view'} = 'Popup';
     # Verifica se o formulário será preenchido
     # com dados de cliente existente na base de dados,
     # ou se cria um formulário em branco.
@@ -87,11 +90,10 @@ sub editar :Local :Args() {
         $c->flash->{'cliente'} = $c->model('DB::Cliente')->new({});
         $action                = $c->uri_for ('cadastrar');
     }
-
     $form_opt{'item'}       = $c->flash->{'cliente'};
     $form                   = $self->cliente_form->run(%form_opt);
     $c->stash->{'form'}     = $form;
-    $c->stash->{'template'} ='clientes/edit.tt2';
+    $c->stash->{'template'} = 'clientes/edit.tt2';
     
     return unless ($form->validated);              # Validação do formulário.
     
@@ -108,11 +110,12 @@ Cadastra novo cliente.
 
 sub cadastrar :Local Args(0){
     my ( $self, $c ) = @_;
-    my $cliente = $c->flash->{'cliente'};
+    my $cliente      = $c->flash->{'cliente'};
+
     try {
         $cliente->insert;
         $c->flash->{'message'} = "Cliente " . $cliente->id . " cadastrado com sucesso.";
-        $c->res->redirect ($c->uri_for (''));
+        $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
     } catch {
         $c->flash->{'message'} = "Erro ao inserir cliente: $_";
         $c->res->redirect ($c->uri_for ('editar'));
@@ -146,11 +149,11 @@ sub atualizar :Local {
             cep            => $params->{'cep'},
             cidade         => $params->{'cidade'}
         });
-        $c->flash->{'message'} = "Cliente " . $cliente->id . " adicionado com sucesso.";
-        $c->res->redirect ($c->uri_for (''));
+        $c->flash->{'message'} = "Cliente " . $cliente->id . " atualizado com sucesso.";
+        $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
     } catch {
       $c->flash->{'message'} = "Erro ao atualizar cliente: $_";
-      $c->res->redirect ($c->uri_for ('editar', $cliente->id));
+      $c->res->redirect ($c->uri_for ('editar', $c->flash->{'cliente'}->id));
     };
 }
 
@@ -186,19 +189,40 @@ e os exibe na tela.
 
 sub detalhes :Local :Args(1) {
     my ( $self, $c, $id_cliente ) = @_;
+    my @colunas                   = ("Código", "Data da encomenda", "Data de entrega", 'Total (R$)', "Status");
+
     $c->stash (
-        cliente  => $c->model('DB::Cliente')->find($id_cliente),
+        current_view => 'Popup',
+        cliente      => $c->model('DB::Cliente')->find($id_cliente),
         # Procura os pedidos associados ao cliente.
-        pedidos  => [ $c->model('DB::Pedido')->search ({
+        pedidos      => [ $c->model('DB::Pedido')->search ({
             id_cliente => $id_cliente,
             status     => {
                 -in => [ 1, 3 ]
             },  
         }) ],
-        template => 'clientes/details.tt2'
+        template => 'clientes/details.tt2',
+        colunas  => \@colunas,
     );
 }
 
+=head2 busca_cep
+
+=cut
+
+sub busca_cep :Local :Args(1) {
+    my ($self, $c, $cep) = @_;
+    my $cepper           = WWW::Correios::CEP->new;
+    my $addr;
+
+    for (1..3) {
+        $addr = $cepper->find ($cep);
+        last if ( -z $addr->{'status'});
+        sleep (1);
+    }
+    $c->res->content_type ('application/json');
+    $c->res->body (JSON->new->utf8(1)->encode ($addr));
+}
 =encoding utf8
 
 =head1 AUTHOR

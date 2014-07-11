@@ -1,16 +1,5 @@
-[% IF c.flash.message.match ('^Erro') %]
-    <div class="alert alert-danger">
-        <span class="error_message">
-            [% c.flash.message %]
-        </span>
-    </div>
-[% ELSIF c.flash.message.match ('sucesso.$') %]
-    <div class="alert alert-success">
-        <span class="success_message">
-            [% c.flash.message %]
-        </span>
-    </div>
-[% END %]
+[% USE String %]
+
 
 <div class="row-fluid">
   <div class="page-header">
@@ -19,16 +8,21 @@
 </div>
 
 <div class="row-fluid">
-    <div class="col-lg-6">
-        <div class="input-group">
-            <input type="text" class="form-control">
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Buscar</button>
-            </span>
-        </div><!-- /input-group -->
-    </div><!-- /.col-lg-6 -->
+  [% IF c.flash.message.match ('^Erro') %]
+      <div class="alert alert-danger">
+          <span class="error_message">
+              [% c.flash.message %]
+          </span>
+      </div>
+  [% ELSIF c.flash.message.match ('sucesso.$') %]
+      <div class="alert alert-success">
+          <span class="success_message">
+              [% c.flash.message %]
+          </span>
+      </div>
+  [% END %]
 
-<table id="books" class="table table-bordered table-striped tablesorter table-hover" summary="The list of all books">
+<table id="estoqueTabela" class="table table-bordered table-striped tablesorter table-hover" summary="Tabela de produtos">
   <thead>
     <tr>
       [% FOR coluna IN colunas %]
@@ -45,8 +39,14 @@
             <td>[% produto.quant %]</td>
             <td>
                 <div class="btn-group">
-                    <a class="btn btn-mini" href="[% c.uri_for ('detalhes', produto.id) %]" rel="tooltip" title="Detalhes"><span class="glyphicon glyphicon-search"></span></a>
-                    <a class="btn btn-mini" href="[% c.uri_for ('editar', produto.id) %]" rel="tooltip" title="Editar"><span class="glyphicon glyphicon-pencil"></span></a>
+                    [% linkEditar   = String.new ("'estoque/editar/") %]
+                    [% linkEditar.append (produto.id) %]
+                    [% linkEditar.append ("'") %]
+                    [% linkDetalhes = String.new ("'estoque/detalhes/") %]
+                    [% linkDetalhes.append (produto.id) %]
+                    [% linkDetalhes.append ("'") %]
+                    <a class="btn btn-mini" rel="tooltip" title="Detalhes" onclick="window.open ([% linkDetalhes %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-search"></span></a>
+                    <a class="btn btn-mini" rel="tooltip" title="Editar" onclick="window.open ([% linkEditar %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-pencil"></span></a>
                     <a class="btn btn-mini" href="[% c.uri_for ('excluir', produto.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
                 </div>
             </td>
@@ -54,5 +54,5 @@
     [% END %]
   </tbody>
 </table>
-<p><a class="btn btn-primary" href="[% c.uri_for ('editar') %]">Cadastrar produto</a></p>
+<p><a class="btn btn-primary" onclick="window.open ('estoque/editar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Cadastrar produto</a></p>
 </div>

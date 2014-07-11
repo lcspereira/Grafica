@@ -14,7 +14,9 @@
     [% form.render %]
     <script type=text/javascript src="../../js/utils.js"></script>
     <script type=text/javascript>
-        formButtons ('formCliente');
+        document.getElementById('cep').onblur = function () {
+            buscaCep (document.getElementById('cep').value);
+        } 
     </script>
 </div><!--/row-->
 

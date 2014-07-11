@@ -1,7 +1,15 @@
 <!-- BEGIN site/footer -->
       <div class="row-fluid">
        <div class="span4">
-         <div id="copyright">&copy; [% site.copyright %]</div>
+         <div id="copyright">
+            &copy; [% site.copyright %]<br/>
+         </div>
        </div>
       </div>
+
+      <p align="right">
+          <a href="http://www.catalystframework.org/"><img src="http://[% c.req.uri.host %]:[% c.req.uri.port %]/static/images/btn_120x50_powered_shadow.png"/></a><br/>
+          <a href="http://www.perl.org/"><img src="http://[% c.req.uri.host %]:[% c.req.uri.port %]/static/images/perl.png"/></a><br/>
+          <a href="http://www.postgresql.org/"><img src="http://[% c.req.uri.host %]:[% c.req.uri.port %]/static/images/pg.gif"/>
+      </p>
 <!-- END site/footer -->

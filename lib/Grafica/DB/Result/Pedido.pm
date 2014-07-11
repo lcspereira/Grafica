@@ -41,7 +41,9 @@ __PACKAGE__->table("pedido");
 =head2 id
 
   data_type: 'integer'
+  is_auto_increment: 1
   is_nullable: 0
+  sequence: 'pedido_id_seq'
 
 =head2 id_cliente
 
@@ -52,7 +54,9 @@ __PACKAGE__->table("pedido");
 =head2 data_encomenda
 
   data_type: 'timestamp'
+  default_value: current_timestamp
   is_nullable: 0
+  original: {default_value => \"now()"}
 
 =head2 data_entrega
 
@@ -80,6 +84,7 @@ __PACKAGE__->table("pedido");
 =head2 status
 
   data_type: 'integer'
+  default_value: 1
   is_foreign_key: 1
   is_nullable: 0
 
@@ -87,11 +92,21 @@ __PACKAGE__->table("pedido");
 
 __PACKAGE__->add_columns(
   "id",
-  { data_type => "integer", is_nullable => 0 },
+  {
+    data_type         => "integer",
+    is_auto_increment => 1,
+    is_nullable       => 0,
+    sequence          => "pedido_id_seq",
+  },
   "id_cliente",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
   "data_encomenda",
-  { data_type => "timestamp", is_nullable => 0 },
+  {
+    data_type     => "timestamp",
+    default_value => \"current_timestamp",
+    is_nullable   => 0,
+    original      => { default_value => \"now()" },
+  },
   "data_entrega",
   { data_type => "timestamp", is_nullable => 0 },
   "subtotal",
@@ -101,7 +116,12 @@ __PACKAGE__->add_columns(
   "total",
   { data_type => "numeric", is_nullable => 0, size => [5, 2] },
   "status",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
+  {
+    data_type      => "integer",
+    default_value  => 1,
+    is_foreign_key => 1,
+    is_nullable    => 0,
+  },
 );
 
 =head1 PRIMARY KEY
@@ -169,8 +189,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-27 22:21:54
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:JIKlE4i9K75u4YDoUGzqnQ
+# Created by DBIx::Class::Schema::Loader v0.07040 @ 2014-07-09 18:28:01
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ARckCDtx7VEIBkoNy8vu2A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

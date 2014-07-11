@@ -8,6 +8,8 @@ use Grafica::Form::Pedido;
 use Grafica::Form::PedidoProdutos;
 use Grafica::Form::PedidoTotal;
 use HTML::FormHandler;
+use WWW::Correios::CEP;
+
 use utf8;
 use feature qw(switch);
 
@@ -71,7 +73,7 @@ sub index :Path :Args(0) {
     @colunas                    = ("Código", "Cliente", "Data da encomenda", "Data de entrega", 'Total (R$)', "Status");
     $c->stash->{'pedidos'}      = \@pedidos;
     $c->stash->{'colunas'}      = \@colunas;
-    $c->stash->{'num_pedidos'} = scalar (@pedidos);
+    $c->stash->{'num_pedidos'}  = scalar (@pedidos);
 }
 
 =head2 novo_pedido
@@ -92,7 +94,7 @@ sub novo_pedido :Path('novoPedido') Args(0) {
         no_update => 1, # Impede inserção no banco de dados.
     );
     $c->stash (
-        current_view => 'TT',
+        current_view => 'Popup',
         template     => 'pedidos/novoPedido.tt2',
         form         => $form
     );
@@ -124,8 +126,9 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
         item      => $pedido,
         no_update => 1,
     );
+
     $c->stash (
-        current_view => 'TT',
+        current_view => 'Popup',
         template     => 'pedidos/pedidoProdutos.tt2',
         form         => $form,
         colunas      => [ 'Produto', 'Preço (R$)', 'Quantidade' ],
@@ -197,8 +200,10 @@ sub total_pedido :Path('novoPedido/total') Args(0) {
             },
         },
     );
+    
+
     $c->stash (
-        current_view => 'TT',
+        current_view => 'Popup',
         template     => 'pedidos/pedidoTotal.tt2',
         form         => $form,
         colunas      => [ 'Produto', 'Preço (R$)', 'Quantidade' ],
@@ -243,11 +248,10 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
             }
         });
         $c->flash->{'message'} = "Pedido " . $pedido->id . " criado com sucesso.";
-        $c->res->redirect ($c->uri_for (''));
     } catch {
         $c->flash->{'message'} = "Erro ao criar pedido: $_";
-        $c->res->redirect ($c->uri_for (''));
     };
+    $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
 }
 
 =head2 cancelar
@@ -256,6 +260,7 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
 
 sub cancelar :Local Args(1) {
     my ( $self, $c, $id_pedido ) = @_;
+    
     try {
         $c->model('DB::Pedido')->find($id_pedido)->update ({
             status => 2,
@@ -278,12 +283,14 @@ sub detalhes :Local Args(1) {
     my $pedido_produto           = [ $c->model('DB::PedidoProduto')->search ({
         id_pedido => $id_pedido
     }) ];
-    p ($pedido_produto);
+    
+    $c->stash->{'current_view'} = 'Popup';
     $c->stash->{'pedido'}        = $pedido;
     $c->stash->{'template'}      = 'pedidos/details.tt2';
-    $c->stash->{'colunas'}       = [ 'Produto', 'Preço (R$)', 'Quantidade' ];
+    $c->stash->{'colunas'}       = [ 'Produto', 'Quantidade' ];
     $c->stash->{'produtos'}      = $pedido_produto;
 }
+
 
 =encoding utf8
 

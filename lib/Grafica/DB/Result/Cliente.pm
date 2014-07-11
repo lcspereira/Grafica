@@ -54,7 +54,7 @@ __PACKAGE__->table("cliente");
 =head2 cpf_cnpj
 
   data_type: 'varchar'
-  is_nullable: 0
+  is_nullable: 1
   size: 20
 
 =head2 ie
@@ -104,6 +104,12 @@ __PACKAGE__->table("cliente");
   is_nullable: 0
   size: 30
 
+=head2 bairro
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 50
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -117,7 +123,7 @@ __PACKAGE__->add_columns(
   "nome",
   { data_type => "varchar", is_nullable => 0, size => 100 },
   "cpf_cnpj",
-  { data_type => "varchar", is_nullable => 0, size => 20 },
+  { data_type => "varchar", is_nullable => 1, size => 20 },
   "ie",
   { data_type => "varchar", is_nullable => 1, size => 20 },
   "telefone",
@@ -134,6 +140,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 9 },
   "cidade",
   { data_type => "varchar", is_nullable => 0, size => 30 },
+  "bairro",
+  { data_type => "varchar", is_nullable => 1, size => 50 },
 );
 
 =head1 PRIMARY KEY
@@ -166,8 +174,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-27 22:21:54
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:gSbB3hYkeZaqJDcxlt/zsQ
+# Created by DBIx::Class::Schema::Loader v0.07040 @ 2014-07-09 18:28:01
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:a/YIYDglKCG0IBjnut1fsA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

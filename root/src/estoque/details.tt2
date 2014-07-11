@@ -1,7 +1,7 @@
 <div class="row-fluid">
   <h3> Dados do produto: </h3>
   <br/>
-  <br/>
+  <hr>
   <div class="span8">
     <p>
      <b class="title">Descrição:</b> [% produto.descr %]
@@ -15,7 +15,4 @@
     <br />
   </div>
 </div>
-
 <hr>
-
-<p><a class="btn btn-primary" href="[% c.uri_for('') %]">Listar produtos</a></p>

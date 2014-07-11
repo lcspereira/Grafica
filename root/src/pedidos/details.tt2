@@ -1,5 +1,9 @@
+[% USE date %]
+[% USE date (format = '%d/%m/%Y') %]
+[% USE format %]
+[% money = format('R$ %.2f') %]
 <div class="row-fluid">
-  <h3> Pedido: [% pedido.id %]: </h3>
+  <h3> Pedido [% pedido.id %]: </h3>
   <br/>
   <br/>
   <div class="span8">
@@ -7,19 +11,19 @@
      <b class="title">Cliente:</b> [% pedido.id_cliente.nome %]
     </p>
     <p>
-     <b class="title">Data da encomenda:</b> [% pedido.data_encomenda %]
+     <b class="title">Data da encomenda:</b> [% date.format (pedido.data_encomenda) %]
     </p>
     <p>
-     <b class="title">Data de entrega:</b> [% pedido.data_entrega %]
+     <b class="title">Data de entrega:</b> [% date.format (pedido.data_entrega) %]
     </p>
     <p>
-     <b class="title">Subtotal:</b> [% pedido.subtotal %]
+     <b class="title">Subtotal:</b> [% money (pedido.subtotal) %]
     </p>
     <p>
-     <b class="title">Desconto:</b> [% pedido.desconto %]
+     <b class="title">Desconto:</b> [% money (pedido.desconto) %]
     </p>
     <p>
-     <b class="title">Total:</b> [% pedido.total %]
+     <b class="title">Total:</b> [% money (pedido.total) %]
     </p>
     <br/>
     <b class="title">Produtos:</b>
@@ -32,18 +36,15 @@
           </tr>
         </thead>
         <tbody>
-          [% FOR produto IN produtos.id_produto %]
+          [% FOR produto IN produtos %]
               <tr>
-                  <td>[% produto.descr %]</td>
-                  <td>[% produto.preco %]</td>
-                  <td>[% produto.quantidade %]</td>
+                  <td>[% produto.id_produto.descr %]</td>
+                  <td>[% produto.quant %]</td>
               </tr>
           [% END %]
         </tbody>
       </table>
 
   </div>
+  <hr>
 </div>
-
-<hr>
-<p><a class="btn btn-primary" href="[% c.uri_for('') %]">Listar pedidos</a></p>

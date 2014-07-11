@@ -44,6 +44,16 @@ has_field 'ie'             => (
     } ]
 );
 
+has_field 'cep'            => ( 
+    type  => 'Text', 
+    label => 'CEP:',
+    size  => 9, 
+    apply => [ {
+        check   => qr/^[0-9]{5}-[0-9]{3}$/,
+        message => 'CEP inválido. (CEP deve ser digitado com traço.)'
+    } ]
+);
+
 has_field 'endereco'       => ( 
     type             => 'Text',
     label            => 'Endereço:',
@@ -60,21 +70,18 @@ has_field 'compl_endereco' => (
     size  => 50, 
 );
 
+has_field 'bairro' => ( 
+    type  => 'Text',
+    label => 'Bairro:',
+    size  => 50, 
+);
+
 has_field 'cidade'         => ( 
     type             => 'Text', 
     label            => 'Cidade:',
     size             => 30, 
 );
 
-has_field 'cep'            => ( 
-    type  => 'Text', 
-    label => 'CEP:',
-    size  => 9, 
-    apply => [ {
-        check   => qr/^[0-9]{5}-[0-9]{3}$/,
-        message => 'CEP inválido. (CEP deve ser digitado com traço.)'
-    } ]
-);
 
 has_field 'email'          => ( 
     type  => 'Text', 

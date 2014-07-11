@@ -1,59 +1,30 @@
 /*****************************************
- * formButtons
+ * buscaCep 
  *****************************************
- * Cria os botões que faltam no
- * formulário.
+ * Requisição AJAX para preencher o endereço
+ * baseado no CEP.
  *
- * @param form: Nome do formulário.
+ * @param cep: CEP do endereço.
  *****************************************/
 
-function formButtons (nomeForm) {
-    var divFormActions  = document.getElementsByClassName("form-actions")[0];
-    var botaoLimpar     = document.createElement ("input");
-    var botaoVoltar     = document.createElement ("input");
-    
-    /* --------------------------------
-     * Botão limpar
-     * --------------------------------
-     */
+function buscaCep (cep) {
+    var jqxhr;
+    var msg      = document.createTextNode ("Aguarde...");
+    var campoCep = document.getElementById('formCliente').childNodes[7];
+    var msgDone;
 
-    botaoLimpar.id      = "bLimpar";
-    botaoLimpar.name    = "bLimpar";
-    botaoLimpar.type    = "button";
-    botaoLimpar.value   = "Limpar";
-    botaoLimpar.setAttribute ("class", "btn btn-primary");
-    botaoLimpar.setAttribute ("onclick", "document.getElementById ('" + nomeForm + "').reset ()");
-
-    /* -------------------------------- */
-
-
-
-    /* --------------------------------
-     * Botão voltar
-     * --------------------------------
-     */
-
-    botaoVoltar.id      = "bVoltar";
-    botaoVoltar.name    = "bVoltar";
-    botaoVoltar.type    = "button";
-    botaoVoltar.value   = "Voltar";
-    botaoVoltar.setAttribute ("class", "btn btn-danger");
-
-    /* --------------------------------- */
-
-
-
-    /* --------------------------------- 
-     * Anexa os botões na div dos
-     * botões de formulário.
-     * ---------------------------------
-     */
-
-    divFormActions.appendChild (botaoLimpar);
-    divFormActions.appendChild (document.createTextNode (" "));
-    divFormActions.appendChild (botaoVoltar);
-    
-    /* --------------------------------- */
+    campoCep.appendChild (msg);
+    jqxhr   = $.ajax ({
+      url: "busca_cep/" + cep,
+      dataType: "json",
+     }, 30000)  
+     .done (function (dadosCep) {
+          msgDone                                   = document.createTextNode (dadosCep.status);
+          document.getElementById('endereco').value = dadosCep.street;
+          document.getElementById('bairro').value   = dadosCep.neighborhood;
+          document.getElementById('cidade').value   = dadosCep.location;
+          campoCep.replaceChild (msgDone, msg);
+     });
 }
 
 /******************************************/

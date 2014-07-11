@@ -1,7 +1,10 @@
+[% USE String %]
+[% USE date %]
+[% USE date (format = '%d/%m/%Y') %]
 <div class="row-fluid">
   <h3> Dados do cliente: </h3>
   <br/>
-  <br/>
+  <hr>
   <div class="span8">
     <p>
      <b class="title">Nome:</b> [% cliente.nome %]
@@ -23,6 +26,7 @@
         [% IF cliente.compl_endereco %]
             , [% cliente.compl_endereco %]
         [% END %]
+        , [% cliente.bairro %], [% cliente.cidade %]
     </p>
     <p>
      <b class="title">CEP:</b> [% cliente.cep %]
@@ -32,8 +36,36 @@
     </p>
     <br />
   </div>
+  <b>Pedidos associados a este cliente:</b>
+
+  <table id="pedidosTabela" class="table table-bordered table-striped tablesorter table-hover">
+  <thead>
+    <tr>
+      [% FOR coluna IN colunas %]
+        <th scope="col">[% coluna %]</th>
+      [% END %]
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    [% FOR pedido IN pedidos %]
+    <tr>
+      <td>[% pedido.id %]</td>
+      <td>[% date.format (pedido.data_encomenda) %]</td>
+      <td>[% date.format (pedido.data_entrega) %]</td>
+      <td>[% pedido.total %]</td>
+      <td>[% pedido.status.descr %]</td>
+      <td>
+          <div class="btn-group">
+              [% linkDetalhes = String.new ("'../../pedidos/detalhes/") %]
+              [% linkDetalhes.append (pedido.id) %]
+              [% linkDetalhes.append ("'") %]
+              <a class="btn btn-mini" rel="tooltip" title="Detalhes" onclick="window.open ([% linkDetalhes %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-search"></span></a>
+          </div>
+      </td>
+    </tr>
+    [% END %]
+    <hr>
 </div>
 
-<hr>
-<p><a class="btn btn-primary" href="[% c.uri_for('') %]">Listar clientes</a></p>
 
