@@ -61,19 +61,37 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
     my @pedidos;
     my @colunas;
+    my $where;
+
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'template'}     = 'pedidos/index.tt2';
+    $where->{'nome'}            = $c->stash->{'nome_cliente'} || undef;
+    if ($c->stash->{'data_pedido_inicial'}) {
+      if ($c->stash->{'data_pedido_final'}) {
+          $where->{'data_pedido'} = {
+              between => [$c->stash->{'data_pedido_inicial'}, $c->stash->{'data_pedido_final'}]
+          }
+      } else {
+          $where->{data_pedido} = {
+              between => [$c->stash->{'data_pedido_inicial'}, "current_date"]
+          }
+      }
+    }
+       
+    $where->{'status'} = {
+        in => [1, 3]
+    } if (! $c->stash->{'nome_cliente'} && ! $c->stash->{'data_pedido_inicial'});
 
-    @pedidos                    = $c->model('DB::Pedido')->search({},
-    {
+
+
+    @pedidos                   = $c->model('DB::Pedido')->search($where, {
         join => 'cliente',
         join => 'status',
     });
-    
-    @colunas                    = ("Código", "Cliente", "Data da encomenda", "Data de entrega", 'Total (R$)', "Status");
-    $c->stash->{'pedidos'}      = \@pedidos;
-    $c->stash->{'colunas'}      = \@colunas;
-    $c->stash->{'num_pedidos'}  = scalar (@pedidos);
+    @colunas                   = ("Código", "Cliente", "Data da encomenda", "Data de entrega", 'Total (R$)', "Status");
+    $c->stash->{'pedidos'}     = \@pedidos;
+    $c->stash->{'colunas'}     = \@colunas;
+    $c->stash->{'num_pedidos'} = scalar (@pedidos);
 }
 
 =head2 novo_pedido
@@ -84,9 +102,10 @@ Inicializa novo pedido
 
 sub novo_pedido :Path('novoPedido') Args(0) {
     my ( $self, $c ) = @_;
-    my $params = $c->req->params;
-    my $pedido = $c->model('DB::Pedido')->new({});
+    my $params       = $c->req->params;
+    my $pedido       = $c->model('DB::Pedido')->new({});
     my $form;
+
     $form = $self->pedido_form->run (
         params    => $params,
         name      => 'formPedido',
@@ -120,7 +139,7 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
     my $pedido     = $c->model('DB::Pedido')->new({});
     my $produto;
     my @produtos   = @{$c->session->{'pedido_dados'}->{'produtos'}};
-    my $form = $self->pedido_produtos_form->run (
+    my $form       = $self->pedido_produtos_form->run (
         params    => $params,
         name      => 'formPedidoProdutos',
         item      => $pedido,
@@ -262,10 +281,10 @@ sub cancelar :Local Args(1) {
     my ( $self, $c, $id_pedido ) = @_;
     
     try {
-        $c->model('DB::Pedido')->find($id_pedido)->update ({
+        $c->model('DB::Pedido')->find({id => $id_pedido})->update ({
             status => 2,
         });
-        $c->flash->{'message'} = "Pedido $id_pedido cancelado.";
+        $c->flash->{'message'} = "Pedido $id_pedido cancelado com sucesso.";
         $c->res->redirect ($c->uri_for (''));
     } catch {
         $c->flash->{'message'} = "Erro ao cancelar pedido: $_";
@@ -284,7 +303,7 @@ sub detalhes :Local Args(1) {
         id_pedido => $id_pedido
     }) ];
     
-    $c->stash->{'current_view'} = 'Popup';
+    $c->stash->{'current_view'}  = 'Popup';
     $c->stash->{'pedido'}        = $pedido;
     $c->stash->{'template'}      = 'pedidos/details.tt2';
     $c->stash->{'colunas'}       = [ 'Produto', 'Quantidade' ];

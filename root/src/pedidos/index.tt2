@@ -48,8 +48,7 @@
             [% linkDetalhes.append (pedido.id) %]
             [% linkDetalhes.append ("'") %]
             <a class="btn btn-mini" rel="tooltip" title="Detalhes" onclick="window.open ([% linkDetalhes %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-search"></span></a>
-            <a class="btn btn-mini" rel="tooltip" title="Editar" onclick="window.open ([% linkEditar %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-pencil"></span></a>
-            <a class="btn btn-mini" href="[% c.uri_for ('excluir', pedido.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
+            <a class="btn btn-mini" href="[% c.uri_for ('cancelar', pedido.id) %]" rel="tooltip" title="Cancelar"><span class="glyphicon glyphicon-trash"></span></a>
         </div>
        </td>
     </tr>

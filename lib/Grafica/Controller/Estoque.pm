@@ -86,7 +86,6 @@ sub cadastrar :Local :Args(0) {
         $produto->insert;
         $c->flash->{'message'} = "Produto " . $produto->id . " cadastrado com sucesso.";
         $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
-        $c->res->redirect ($c->uri_for (''));
     } catch {
         $c->flash->{'message'} = "Erro ao cadastrar produto: " . $_;
         $c->res->redirect ($c->uri_for ('editar'));

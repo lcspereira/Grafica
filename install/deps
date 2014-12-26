@@ -1,0 +1,10 @@
+DBD::Pg
+Task::Catalyst
+Catalyst::Runtime
+Catalyst::Devel
+Proc::Background
+HTML::FormHandler::Model::DBIC
+Catalyst::Plugin::RequireSSL
+Catalyst::Plugin::Session::Store::FastMmap
+WWW::Correios::CEP
+DateTime::Format::Pg

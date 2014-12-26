@@ -8,11 +8,12 @@ BEGIN;
     IE Varchar(20),
     TELEFONE Varchar(10),
     EMAIL Varchar(50),
-    ENDERECO Varchar(100) NOT NULL,
-    NUM_ENDERECO Integer NOT NULL,
+    ENDERECO Varchar(100),
+    NUM_ENDERECO Integer,
     COMPL_ENDERECO Varchar(50),
     CEP Varchar(9),
-    CIDADE Varchar(30) NOT NULL,
+    BAIRRO Varchar(50),
+    CIDADE Varchar(30),
     CONSTRAINT id_cliente_pk PRIMARY KEY (ID)
   );
 

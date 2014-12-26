@@ -32,7 +32,8 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     # Hello World
-    $c->response->body( $c->welcome_message );
+    $c->stash->{'current_view'} = 'TT';
+    $c->stash->{'template'}     = 'main.tt2';
 }
 
 =head2 default

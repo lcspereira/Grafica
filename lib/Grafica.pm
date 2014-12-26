@@ -24,7 +24,6 @@ use Catalyst qw/
     Session::Store::FastMmap
     Session::State::Cookie
     StackTrace
-    RequireSSL
     Unicode::Encoding
 /;
 
