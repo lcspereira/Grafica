@@ -65,7 +65,7 @@ sub index :Path :Args(0) {
 
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'template'}     = 'pedidos/index.tt2';
-    $where->{'nome'}            = $c->stash->{'nome_cliente'} || undef;
+    
     if ($c->stash->{'data_pedido_inicial'}) {
       if ($c->stash->{'data_pedido_final'}) {
           $where->{'data_pedido'} = {
@@ -76,6 +76,10 @@ sub index :Path :Args(0) {
               between => [$c->stash->{'data_pedido_inicial'}, "current_date"]
           }
       }
+    }
+
+    if ($c->stash->{'nome_cliente'}) {
+      $where->nome = $c->stash->{'nome_cliente'};
     }
        
     $where->{'status'} = {
