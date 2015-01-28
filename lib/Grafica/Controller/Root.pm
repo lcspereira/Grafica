@@ -18,13 +18,13 @@ Grafica::Controller::Root - Root Controller for Grafica
 
 =head1 DESCRIPTION
 
-[enter your description here]
+Menu principal do sistema.
 
 =head1 METHODS
 
 =head2 index
 
-The root page (/)
+Menu principal do sistema.
 
 =cut
 
@@ -61,6 +61,9 @@ sub end : ActionClass('RenderView') {}
 Lucas Pereira,,,
 
 =head1 LICENSE
+
+Esta biblioteca é software livre. Você pode redistribuí-la e/ou modificá-la
+sob os mesmos termos que o próprio Perl.
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -27,6 +27,9 @@ has_field 'produto'      => (
 has_field 'quantidade' => (
     label => 'Quantidade: ',
     type  => 'Float',
+    apply => [  {
+        message => "Quantidade insuficiente no estoque"
+    }, ]
 );
 
 
@@ -42,6 +45,13 @@ sub options_produto {
     my @produtos     = $self->schema->resultset('Produto')->all;
     my @opt_produtos = map { { value => $_->id, label => join (' - ', ($_->descr, 'R$ ' . $_->preco)) } } @produtos;
     return @opt_produtos;
+}
+
+sub validate_quantidade {
+    my ($self, $field) = @_;
+    return unless $self->schema;
+    my $produto = $self->schema->resultset('Produto')->find ($self->field('produto')->value);
+    $self->field('quantidade')->add_error ('Quantidade de ' . $produto->descr . ' insuficiente no estoque (' . $produto->quant . ' disponíveis)') if ($produto->quant < $field->value);
 }
 
 no HTML::FormHandler::Moose;

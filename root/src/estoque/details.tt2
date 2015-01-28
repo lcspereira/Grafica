@@ -1,13 +1,10 @@
 <div class="row-fluid">
-  <h3> Dados do produto: </h3>
+  <h3> [% produto.descr %] </h3>
   <br/>
   <hr>
   <div class="span8">
     <p>
-     <b class="title">Descrição:</b> [% produto.descr %]
-    </p>
-    <p>
-     <b class="title">Preço:</b> [% produto.preco %]
+     <b class="title">Preço:</b> R$ [% produto.preco %]
     </p>
     <p>
      <b class="title">Quantidade:</b> [% produto.quant %]

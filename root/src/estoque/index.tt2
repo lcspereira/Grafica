@@ -33,7 +33,11 @@
   </thead>
   <tbody>
     [% FOR produto IN produtos %]
-        <tr>
+        [% IF produto.quant < 10 %]
+          <tr class="error">
+        [% ELSE %]
+          <tr>
+        [% END %]
             <td>[% produto.descr %]</td>
             <td>[% produto.preco %]</td>
             <td>[% produto.quant %]</td>

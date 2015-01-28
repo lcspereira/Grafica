@@ -49,8 +49,8 @@ has_field 'cep'            => (
     label => 'CEP:',
     size  => 9, 
     apply => [ {
-        check   => qr/^[0-9]{5}-[0-9]{3}$/,
-        message => 'CEP inválido. (CEP deve ser digitado com traço.)'
+        check   => qr/^[0-9]{8}$/,
+        message => 'CEP inválido.'
     } ]
 );
 

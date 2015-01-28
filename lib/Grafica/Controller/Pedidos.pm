@@ -55,6 +55,9 @@ Catalyst Controller.
 
 =head2 index
 
+Página inicial do módulo pedidos.
+Exibe em tabela os pedidos em andamento.
+
 =cut
 
 sub index :Path :Args(0) {
@@ -89,8 +92,9 @@ sub index :Path :Args(0) {
 
 
     @pedidos                   = $c->model('DB::Pedido')->search($where, {
-        join => 'cliente',
-        join => 'status',
+        join     => 'cliente',
+        join     => 'status',
+        order_by => { -asc => 'data_encomenda' }
     });
     @colunas                   = ("Código", "Cliente", "Data da encomenda", "Data de entrega", 'Total (R$)', "Status");
     $c->stash->{'pedidos'}     = \@pedidos;
@@ -321,6 +325,9 @@ sub detalhes :Local Args(1) {
 Lucas Pereira,
 
 =head1 LICENSE
+
+Esta biblioteca é software livre. Você pode redistribuí-la e/ou modificá-la
+sob os mesmos termos que o próprio Perl.
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.

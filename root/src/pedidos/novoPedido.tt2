@@ -4,3 +4,9 @@
   </div>
 </div>
 [% form.render %] 
+<script type=text/javascript src="../../js/utils.js"></script>
+<script type="text/javascript">
+document.getElementById("data_entrega").onkeypress = function () { 
+    punctData (document.getElementById("data_entrega"));
+};
+</script>

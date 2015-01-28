@@ -29,3 +29,9 @@ function buscaCep (cep) {
 
 /******************************************/
 
+
+function punctData (campoData) {
+    if (campoData.value.length == 2 || campoData.value.length == 5) {
+        campoData.value += "/";
+    }
+}

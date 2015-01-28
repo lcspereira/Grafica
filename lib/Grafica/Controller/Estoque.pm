@@ -31,12 +31,30 @@ Controller que representa o módulo Estoque.
 
 =head2 index
 
+Página inicial do módulo Estoque.
+Exibe os produtos em estoque, ordenando pela quantidade.
+Alerta caso algum produto esteja com menos de 10 unidades no estoque.
+
 =cut
 
 sub index :Path :Args(0) {
-    my ( $self, $c )            = @_;
-    my @colunas                 = ('Produto', 'Preço', 'Quantidade');
-    my @produtos                = $c->model('DB::Produto')->all; 
+    my ( $self, $c ) = @_;
+    my @colunas      = ('Produto', 'Preço', 'Quantidade');
+    my $params       = $c->req->params;
+    my @produtos;
+    my $where;
+    
+    #if ($params->{'descr'}) {
+    #  $where = {
+    #      descr
+      #}
+
+    @produtos                   = $c->model('DB::Produto')->search ({}, 
+        {
+          order_by => { -asc => 'quant' },
+        }
+    ); 
+
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'produtos'}     = \@produtos;
     $c->stash->{'colunas'}      = \@colunas;
@@ -47,6 +65,9 @@ sub index :Path :Args(0) {
 
 =head2 editar
 
+Formulário de cadastro / alteração de algum produto do estoque.
+
+@param: Código do produto.
 =cut
 
 sub editar :Local :Args() {
@@ -58,6 +79,8 @@ sub editar :Local :Args() {
         params => $c->req->params,
         name   => 'formProduto'
     );
+
+    # Define se o produto será cadastrado ou alterado.
     if ($id_produto) {
         $c->flash->{'produto'} = $c->model('DB::Produto')->find ($id_produto);
         $action                = $c->uri_for ('atualizar');
@@ -65,6 +88,7 @@ sub editar :Local :Args() {
         $c->flash->{'produto'} = $c->model('DB::Produto')->new({});
         $action                = $c->uri_for ('cadastrar');
     }
+
     $c->stash->{'current_view'} = 'Popup';
     $form_opt{'item'}           = $c->flash->{'produto'};
     $form                       = $self->produto_form->run (%form_opt);
@@ -76,6 +100,8 @@ sub editar :Local :Args() {
 }
 
 =head2 cadastrar
+
+Cadastra um novo produto no estoque.
 
 =cut
 
@@ -93,6 +119,8 @@ sub cadastrar :Local :Args(0) {
 }
 
 =head2 atualizar
+
+Altera determinado produto no estoque.
 
 =cut
 
@@ -117,6 +145,10 @@ sub atualizar :Local :Args(0) {
 
 =head2 excluir
 
+Exclui determinado produto do estoque.
+
+@param: Código do produto.
+
 =cut
 
 sub excluir :Local :Args(1) {
@@ -131,6 +163,10 @@ sub excluir :Local :Args(1) {
 }
 
 =head2 detalhes
+
+Exibe detalhes sobre produto.
+
+@param: Código do produto.
 
 =cut
 
@@ -150,6 +186,9 @@ sub detalhes :Local :Args(1) {
 Lucas Pereira,,,
 
 =head1 LICENSE
+
+Esta biblioteca é software livre. Você pode redistribuí-la e/ou modificá-la
+sob os mesmos termos que o próprio Perl.
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.

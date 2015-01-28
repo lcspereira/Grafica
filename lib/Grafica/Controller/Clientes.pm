@@ -25,7 +25,7 @@ Grafica::Controller::Clientes - Módulo para cadastro/consulta de clientes.
 
 Controller para cadastro / edição de dados de clientes.
 
-=head1 METO
+=head1 METODOS
 
 =cut
 
@@ -34,7 +34,6 @@ Controller para cadastro / edição de dados de clientes.
 Primeira página do módulo de clientes.
 Lista os clientes cadastrados, e possui formulário
 para consulta de clientes por nome.
-TODO: Implementar pesquisa por endereço.
 
 =cut
 
@@ -43,11 +42,26 @@ sub index :Path() :Args(0) {
     my @colunas;
     my @clientes;
     my $params                  = $c->req->params;
+  
+    my $form_busca              = HTML::FormHandler->new ( field_list => [
+        nome => { 
+            label => "Nome: ",
+            type => "Text",
+        },
+        bSubmit => {
+            value => "Buscar",
+            type  => "Submit"
+        }
+    ]);
+
+  
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'template'}     = 'clientes/index.tt2';
     if ($params->{'nome'}) {
         @clientes = $c->model->('DB::Cliente')->search({
-            nome => $params->{'nome'}
+            nome => {
+              -like => "%" . $params->{'nome'} . "%"
+            }
         });
     } else {
         @clientes = $c->model('DB::Cliente')->all;
@@ -56,6 +70,9 @@ sub index :Path() :Args(0) {
     $c->stash->{'clientes'}     = \@clientes;
     $c->stash->{'colunas'}      = \@colunas;
     $c->stash->{'num_clientes'} = scalar (@clientes);
+    $c->stash->{'form_busca'}   = $form_busca;
+    return unless $form_busca->process (params => $params);
+    $c->res->redirect;
 }
 
 =head2 editar
@@ -65,7 +82,7 @@ Formulário de edição de cliente.
 É utilizado tanto para cadastro novo, quanto para
 editar contatos existentes.
 
-@param int: Código do cliente.
+@param: Código do cliente.
 
 =cut
 
@@ -162,6 +179,8 @@ sub atualizar :Local {
 
 Exclui o cliente do banco de dados.
 
+@param: Código do cliente.
+
 @param int: Código do cliente.
 
 =cut
@@ -183,7 +202,7 @@ sub excluir :Local :Args(1) {
 Consulta dados de um determinado cliente
 e os exibe na tela.
 
-@param int: Código do cliente.
+@param: Código do cliente.
 
 =cut
 
@@ -207,6 +226,10 @@ sub detalhes :Local :Args(1) {
 }
 
 =head2 busca_cep
+
+Executa pesquisa de rua por CEP. Imprime o resultado da busca em JSON.
+
+@param: CEP da rua a ser buscado.
 
 =cut
 

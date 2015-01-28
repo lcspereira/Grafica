@@ -19,7 +19,7 @@
         </span>
     </div>
 [% END %]
-
+[% form_busca.render %]
 <div class="row-fluid">
 <table id="clientesTabela" class="table table-bordered table-striped tablesorter table-hover" summary="Lista de clientes.">
   <thead>
