@@ -1,14 +1,10 @@
-
 <!DOCTYPE HTML>
 <html>
  <head>
   <title>Tecnicópias Grafica e Editora LTDA.</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="http://[% c.req.uri.host %]:[% c.req.uri.port %]/css/bootstrap-combined.min.css" rel="stylesheet">
-  <link href="http://[% c.req.uri.host %]:[% c.req.uri.port %]/css/bootstrap-glyphicons.css" rel="stylesheet">
-  <script type="text/javascript" src="http://[% c.req.uri.host %]:[% c.req.uri.port %]/js/jquery.js"></script>
-  <script type="text/javascript" src="http://[% c.req.uri.host %]:[% c.req.uri.port %]/js/bootstrap.js"></script>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+  <script type="text/javascript" src="http://[% c.req.uri.host %]:[% c.req.uri.port %]/js/jquery.js"></script>
+  <link href="http://[% c.req.uri.host %]:[% c.req.uri.port %]/static/css/grafica.css" rel="stylesheet">
   <style type="text/css">
 body {
 padding-top: 60px;

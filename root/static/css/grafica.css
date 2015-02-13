@@ -1,0 +1,19 @@
+#modulosTabBar {
+    width: 100%;
+}
+
+.queryTable {
+    width: 100%;
+}
+
+#produtosPedidoTable {
+    width: 100%;
+}
+
+.errorMessage {
+    color: red;
+}
+
+.successMessage {
+    color: green;
+}

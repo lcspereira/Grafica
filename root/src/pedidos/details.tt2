@@ -27,7 +27,7 @@
     </p>
     <br/>
     <b class="title">Produtos:</b>
-      <table id="pedidoProdutosTabela" class="table table-bordered table-striped tablesorter table-hover" summary="Lista de produtos do pedido.">
+      <table id="pedidoProdutosTabela" border=1>
         <thead>
           <tr>
             [% FOR coluna IN colunas %]

@@ -38,7 +38,7 @@
   </div>
   <b>Pedidos associados a este cliente:</b>
 
-  <table id="pedidosTabela" class="table table-bordered table-striped tablesorter table-hover">
+  <table id="pedidosTabela" border='1'>
   <thead>
     <tr>
       [% FOR coluna IN colunas %]
@@ -57,10 +57,7 @@
       <td>[% pedido.status.descr %]</td>
       <td>
           <div class="btn-group">
-              [% linkDetalhes = String.new ("'../../pedidos/detalhes/") %]
-              [% linkDetalhes.append (pedido.id) %]
-              [% linkDetalhes.append ("'") %]
-              <a class="btn btn-mini" rel="tooltip" title="Detalhes" onclick="window.open ([% linkDetalhes %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-search"></span></a>
+              <button onclick="window.open ('../../pedidos/detalhes/' + [% pedido.id %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
           </div>
       </td>
     </tr>

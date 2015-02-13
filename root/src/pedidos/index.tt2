@@ -1,27 +1,17 @@
 [% USE String %]
 [% USE date %]
 [% USE date (format = '%d/%m/%Y') %]
-<div class="row-fluid">
-  <div class="page-header">
-    <h3>Pedidos<small>([% num_pedidos %])</h3>
-  </div>
-</div>
-<div class="row-fluid">
+<script>
+  document.getElementById("pedidosTab").bgColor = "#828282";
+</script>
+<h3>Pedidos<small>([% num_pedidos %])</h3>
 [% IF c.flash.message.match ('^Erro') %]
-    <div class="alert alert-danger">
-        <span class="error_message">
-            [% c.flash.message %]
-        </span>
-    </div>
+    <div class="errorMessage">[% c.flash.message %]</div>
 [% ELSIF c.flash.message.match ('sucesso.$') %]
-    <div class="alert alert-success">
-        <span class="success_message">
-            [% c.flash.message %]
-        </span>
-    </div>
+    <div class="successMessage">[% c.flash.message %]</div>
 [% END %]
 
-<table id="pedidosTabela" class="table table-bordered table-striped tablesorter table-hover">
+<table border=1 class="queryTable">
   <thead>
     <tr>
       [% FOR coluna IN colunas %]
@@ -40,20 +30,16 @@
       <td>[% pedido.total %]</td>
       <td>[% pedido.status.descr %]</td>
       <td>            
-        <div class="btn-group">
-            [% linkEditar   = String.new ("'pedidos/editar/") %]
-            [% linkEditar.append (pedido.id) %]
-            [% linkEditar.append ("'") %]
-            [% linkDetalhes = String.new ("'pedidos/detalhes/") %]
-            [% linkDetalhes.append (pedido.id) %]
-            [% linkDetalhes.append ("'") %]
-            <a class="btn btn-mini" rel="tooltip" title="Detalhes" onclick="window.open ([% linkDetalhes %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-search"></span></a>
-            <a class="btn btn-mini" href="[% c.uri_for ('cancelar', pedido.id) %]" rel="tooltip" title="Cancelar"><span class="glyphicon glyphicon-trash"></span></a>
+        <div>
+            <button type="button"  onclick="window.open ('pedidos/detalhes/' + [% pedido.id %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
+              <button type="button" onclick="location.href = [% c.uri_for ('cancelar', pedido.id) %]">Cancelar</button>
         </div>
        </td>
     </tr>
     [% END %]
   </tbody>
 </table>
-<p><a class="btn btn-primary" onclick="window.open ('pedidos/novoPedido', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Criar pedido</a></p>
+<br/>
+<br/>
+<button onclick="window.open ('pedidos/novoPedido', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Criar pedido</button>
 </div>

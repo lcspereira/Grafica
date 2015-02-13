@@ -7,12 +7,11 @@ extends 'HTML::FormHandler';
 use namespace::autoclean;
 use utf8;
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
-with 'HTML::FormHandler::Widget::Theme::Bootstrap';
+with 'HTML::FormHandler::Widget::Form::Table';
 
-
-has '+widget_wrapper' => ( 
-    default => 'Bootstrap' 
-); 
+has '+widget_wrapper' => (
+  default => 'Table'
+);
 
 has '+item_class'     => ( 
     default => 'Produto' 
@@ -23,6 +22,9 @@ has_field 'descr'     => (
     type             => 'TextArea', 
     required         => 1,
     required_message => 'Por favor, digite uma breve descrição do produto.',
+    element_attr => {
+        cols => 40,
+    }
 );
 
 has_field 'quant'     => ( 

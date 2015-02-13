@@ -29,7 +29,17 @@ Controller para cadastro / edição de dados de clientes.
 
 =cut
 
+
 =head2 index
+
+=cut
+
+sub index :Path :Args() {
+    my ($self, $c) = @_;
+    $c->res->redirect ($c->uri_for ("main"));
+}
+
+=head2 main
 
 Primeira página do módulo de clientes.
 Lista os clientes cadastrados, e possui formulário
@@ -37,42 +47,48 @@ para consulta de clientes por nome.
 
 =cut
 
-sub index :Path() :Args(0) {
-    my ( $self, $c ) = @_;
+sub main :Local :Args() {
+    my ( $self, $c, $nome_buscar ) = @_;
     my @colunas;
     my @clientes;
     my $params                  = $c->req->params;
   
-    my $form_busca              = HTML::FormHandler->new ( field_list => [
-        nome => { 
-            label => "Nome: ",
-            type => "Text",
-        },
-        bSubmit => {
-            value => "Buscar",
-            type  => "Submit"
-        }
-    ]);
+    my $form_busca              = HTML::FormHandler->new ( 
+        widget_wrapper => "Table",
+        name           => "buscaClienteForm",
+        field_list     => [
+            nome => { 
+                name  => "nomeBuscar",
+                label => "Nome: ",
+                type  => "Text",
+            },
+            bSubmit => {
+                value => "Buscar",
+                type  => "Submit"
+            }
+        ]
+    );
 
   
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'template'}     = 'clientes/index.tt2';
-    if ($params->{'nome'}) {
-        @clientes = $c->model->('DB::Cliente')->search({
+    if ($nome_buscar) {
+        @clientes = $c->model('DB::Cliente')->search({
             nome => {
-              -like => "%" . $params->{'nome'} . "%"
-            }
+                -ilike => "%$nome_buscar%",
+            },
         });
     } else {
         @clientes = $c->model('DB::Cliente')->all;
     }
+
     @colunas                    = ('Nome', 'Endereço', 'Telefone', 'E-mail');
     $c->stash->{'clientes'}     = \@clientes;
     $c->stash->{'colunas'}      = \@colunas;
     $c->stash->{'num_clientes'} = scalar (@clientes);
     $c->stash->{'form_busca'}   = $form_busca;
     return unless $form_busca->process (params => $params);
-    $c->res->redirect;
+    $c->res->redirect ($c->uri_for ("main", $params->{'nomeBuscar'}));
 }
 
 =head2 editar

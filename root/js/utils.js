@@ -10,10 +10,10 @@
 function buscaCep (cep) {
     var jqxhr;
     var msg      = document.createTextNode ("Aguarde...");
-    var campoCep = document.getElementById('formCliente').childNodes[7];
+    var linhaCep = (document.getElementsByTagName('tbody'))[0].childNodes[6];
     var msgDone;
 
-    campoCep.appendChild (msg);
+    linhaCep.appendChild (msg);
     jqxhr   = $.ajax ({
       url: "busca_cep/" + cep,
       dataType: "json",
@@ -23,7 +23,7 @@ function buscaCep (cep) {
           document.getElementById('endereco').value = dadosCep.street;
           document.getElementById('bairro').value   = dadosCep.neighborhood;
           document.getElementById('cidade').value   = dadosCep.location;
-          campoCep.replaceChild (msgDone, msg);
+          linhaCep.replaceChild (msgDone, msg);
      });
 }
 

@@ -1,27 +1,15 @@
-[% USE String %]
-
-
-<div class="row-fluid">
-  <div class="page-header">
-    <h3>Clientes<small>([% num_clientes %])</h3>
-  </div>
-</div>
+<script>
+  document.getElementById("clientesTab").bgColor = "#828282";
+</script>
+<h3>Clientes<small>([% num_clientes %])</h3>
 [% IF c.flash.message.match ('^Erro') %]
-    <div class="alert alert-danger">
-        <span class="error_message">
-            [% c.flash.message %]
-        </span>
-    </div>
+    <div class="errorMessage">[% c.flash.message %]</div>
 [% ELSIF c.flash.message.match ('sucesso.$') %]
-    <div class="alert alert-success">
-        <span class="success_message">
-            [% c.flash.message %]
-        </span>
-    </div>
+    <div class="successMessage">[% c.flash.message %]<div>
 [% END %]
 [% form_busca.render %]
-<div class="row-fluid">
-<table id="clientesTabela" class="table table-bordered table-striped tablesorter table-hover" summary="Lista de clientes.">
+<br/>
+<table border=1 class="queryTable">
   <thead>
     <tr>
       [% FOR coluna IN colunas %]
@@ -44,21 +32,14 @@
             <td>[% cliente.email %]</td>
             <td>
                 <div class="btn-group">
-
-                    [% linkEditar   = String.new ("'clientes/editar/") %]
-                    [% linkEditar.append (cliente.id) %]
-                    [% linkEditar.append ("'") %]
-                    [% linkDetalhes = String.new ("'clientes/detalhes/") %]
-                    [% linkDetalhes.append (cliente.id) %]
-                    [% linkDetalhes.append ("'") %]
-                    <a class="btn btn-mini" rel="tooltip" title="Detalhes" onclick="window.open ([% linkDetalhes %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-search"></span></a>
-                    <a class="btn btn-mini" rel="tooltip" title="Editar" onclick="window.open ([% linkEditar %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')"><span class="glyphicon glyphicon-pencil"></span></a>
-                    <a class="btn btn-mini" href="[% c.uri_for ('excluir', cliente.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
+                    <button onclick="window.open ('clientes/detalhes/' + [% cliente.id %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
+                    <button onclick="window.open ('clientes/editar/' + [% cliente.id %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Editar</button>
+                    <button onclick="href=\"[% c.uri_for ('excluir', cliente.id) %]\"">Excluir</button>
                 </div>
             </td>
         </tr>
     [% END %]
   </tbody>
 </table>
-<p><a class="btn btn-primary" onclick="window.open ('clientes/editar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Cadastrar cliente</a></p>
-</div>
+<br/>
+<button onclick="window.open ('clientes/editar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Cadastrar cliente</button>

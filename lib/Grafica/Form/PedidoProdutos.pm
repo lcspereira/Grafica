@@ -8,11 +8,11 @@ extends 'HTML::FormHandler';
 
 use namespace::autoclean;
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
-with 'HTML::FormHandler::Widget::Theme::Bootstrap';
+with 'HTML::FormHandler::Widget::Form::Table';
 
-has '+widget_wrapper'    => ( 
-    default => 'Bootstrap' 
-); 
+has '+widget_wrapper' => (
+  default => 'Table'
+);
 
 has '+item_class'        => ( 
     default => 'Grafica::DB::Result::Pedido' 
