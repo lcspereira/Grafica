@@ -48,7 +48,7 @@ para consulta de clientes por nome.
 =cut
 
 sub main :Local :Args() {
-    my ( $self, $c, $nome_buscar ) = @_;
+    my ( $self, $c ) = @_;
     my @colunas;
     my @clientes;
     my $params                  = $c->req->params;
@@ -72,13 +72,15 @@ sub main :Local :Args() {
   
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'template'}     = 'clientes/index.tt2';
-    if ($nome_buscar) {
+    if ($c->stash->{'nome_buscar'}) {
+        print $c->stash->{'nome_buscar'} . "\n";
         @clientes = $c->model('DB::Cliente')->search({
             nome => {
-                -ilike => "%$nome_buscar%",
+                -ilike => "%" . $c->stash->{'nome_buscar'} . "%",
             },
         });
     } else {
+        print $c->stash->{'nome_buscar'} . "\n";
         @clientes = $c->model('DB::Cliente')->all;
     }
 
@@ -88,7 +90,8 @@ sub main :Local :Args() {
     $c->stash->{'num_clientes'} = scalar (@clientes);
     $c->stash->{'form_busca'}   = $form_busca;
     return unless $form_busca->process (params => $params);
-    $c->res->redirect ($c->uri_for ("main", $params->{'nomeBuscar'}));
+    $c->stash->{'nome_buscar'} = $params->{'nomeBuscar'};
+    $c->res->redirect ($c->uri_for ("main"));
 }
 
 =head2 editar
@@ -144,14 +147,17 @@ Cadastra novo cliente.
 sub cadastrar :Local Args(0){
     my ( $self, $c ) = @_;
     my $cliente      = $c->flash->{'cliente'};
+    my $message;
 
     try {
         $cliente->insert;
-        $c->flash->{'message'} = "Cliente " . $cliente->id . " cadastrado com sucesso.";
-        $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
+        $message = "Cliente " . $cliente->id . " cadastrado com sucesso.";
+        #$message = s/"/'/;
+        $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
-        $c->flash->{'message'} = "Erro ao inserir cliente: $_";
-        $c->res->redirect ($c->uri_for ('editar'));
+        $message = "Erro ao inserir cliente: $_";
+        #$message = s/"/'/;
+        $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     };
 }
 
@@ -166,6 +172,8 @@ sub atualizar :Local {
     my ( $self, $c ) = @_;
     my $params       = $c->flash->{'form_params'};       
     my $cliente;
+    my $message;
+
     try {
         # Atualiza cliente conforme os parâmetros.
         $cliente = $c->model('DB::Cliente')->find ($c->flash->{'cliente'}->id);
@@ -182,11 +190,13 @@ sub atualizar :Local {
             cep            => $params->{'cep'},
             cidade         => $params->{'cidade'}
         });
-        $c->flash->{'message'} = "Cliente " . $cliente->id . " atualizado com sucesso.";
-        $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
+        $message = "Cliente " . $cliente->id . " atualizado com sucesso.";
+        #$message = s/"/'/;
+        $c->res->body ("<script>alert ('$message'); window.opener.location.reload (true); window.close();</script>");
     } catch {
-      $c->flash->{'message'} = "Erro ao atualizar cliente: $_";
-      $c->res->redirect ($c->uri_for ('editar', $c->flash->{'cliente'}->id));
+        $message = "Erro ao atualizar cliente: $_";
+        #$message = s/"/'/;
+        $c->res->body ("<script>alert ('$message'); location.href='editar/'" . $cliente->id . ");");
     };
 }
 
@@ -203,13 +213,17 @@ Exclui o cliente do banco de dados.
 
 sub excluir :Local :Args(1) {
     my ( $self, $c, $id_cliente ) = @_;
+    my $message;
+
     try {
         $c->model('DB::Cliente')->find($id_cliente)->delete;
-        $c->flash->{'message'} = "Cliente " . $id_cliente . " excluído com sucesso.";
+        $message = "Cliente" . $id_cliente . " excluído com sucesso.";
     } catch {
-        $c->flash->{'message'} = "Erro ao excluir cliente: $_";
+        $message = "Erro ao excluir cliente: $_"; 
     };
-    $c->res->redirect ($c->uri_for (''));
+    $message =~ s/\n/\ /g;
+    $message =~ s/'/\\'/g;
+    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for (qw ("clientes" "main")) . "';</script>");
 }
 
 

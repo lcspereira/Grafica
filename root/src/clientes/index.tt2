@@ -2,11 +2,6 @@
   document.getElementById("clientesTab").bgColor = "#828282";
 </script>
 <h3>Clientes<small>([% num_clientes %])</h3>
-[% IF c.flash.message.match ('^Erro') %]
-    <div class="errorMessage">[% c.flash.message %]</div>
-[% ELSIF c.flash.message.match ('sucesso.$') %]
-    <div class="successMessage">[% c.flash.message %]<div>
-[% END %]
 [% form_busca.render %]
 <br/>
 <table border=1 class="queryTable">
@@ -32,9 +27,9 @@
             <td>[% cliente.email %]</td>
             <td>
                 <div class="btn-group">
-                    <button onclick="window.open ('clientes/detalhes/' + [% cliente.id %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
-                    <button onclick="window.open ('clientes/editar/' + [% cliente.id %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Editar</button>
-                    <button onclick="href=\"[% c.uri_for ('excluir', cliente.id) %]\"">Excluir</button>
+                    <button onclick="window.open ('detalhes/' + [% cliente.id %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
+                    <button onclick="window.open ('editar/' + [% cliente.id %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Editar</button>
+                    <button onclick="location.href='excluir/' + [% cliente.id %]">Excluir</button>
                 </div>
             </td>
         </tr>
@@ -42,4 +37,4 @@
   </tbody>
 </table>
 <br/>
-<button onclick="window.open ('clientes/editar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Cadastrar cliente</button>
+<button onclick="window.open ('editar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Cadastrar cliente</button>
