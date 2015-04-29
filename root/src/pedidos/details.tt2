@@ -2,32 +2,40 @@
 [% USE date (format = '%d/%m/%Y') %]
 [% USE format %]
 [% money = format('R$ %.2f') %]
-<div class="row-fluid">
   <h3> Pedido [% pedido.id %]: </h3>
+  <hr/>
   <br/>
-  <br/>
-  <div class="span8">
-    <p>
-     <b class="title">Cliente:</b> [% pedido.id_cliente.nome %]
-    </p>
-    <p>
-     <b class="title">Data da encomenda:</b> [% date.format (pedido.data_encomenda) %]
-    </p>
-    <p>
-     <b class="title">Data de entrega:</b> [% date.format (pedido.data_entrega) %]
-    </p>
-    <p>
-     <b class="title">Subtotal:</b> [% money (pedido.subtotal) %]
-    </p>
-    <p>
-     <b class="title">Desconto:</b> [% money (pedido.desconto) %]
-    </p>
-    <p>
-     <b class="title">Total:</b> [% money (pedido.total) %]
-    </p>
+  <div>
+    <table border="1" class="queryTable">
+      <tbody>
+        <tr>
+          <td><b>Cliente:</b></td> 
+          <td>[% pedido.id_cliente.nome %]</td>
+        </tr>
+        <tr>
+          <td><b>Data da encomenda:</b></td> 
+          <td>[% date.format (pedido.data_encomenda) %]</td>
+        </tr>
+        <tr>
+          <td><b>Data de entrega:</b></td> 
+          <td>[% date.format (pedido.data_entrega) %]</td>
+        </tr>
+        <tr>
+          <td><b>Subtotal:</b></td> 
+          <td>[% money (pedido.subtotal) %]</td>
+        </tr>
+        <tr>
+          <td><b>Desconto:</b></td> 
+          <td>[% money (pedido.desconto) %]</td>
+        </tr>
+        <tr>
+          <td><b>Total:</b></td> 
+          <td>[% money (pedido.total) %]</td>
+        </tr>
+    </table>
     <br/>
     <b class="title">Produtos:</b>
-      <table id="pedidoProdutosTabela" border=1>
+      <table border=1 class="queryTable">
         <thead>
           <tr>
             [% FOR coluna IN colunas %]
@@ -47,4 +55,6 @@
 
   </div>
   <hr>
-</div>
+  </div>
+  <br/>
+<button onclick="window.print ()">Imprimir</button>

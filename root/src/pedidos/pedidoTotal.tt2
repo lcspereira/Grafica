@@ -5,10 +5,10 @@
     <h1>Resumo do pedido:</h1>
   </div>
 </div>
-<h4>Cliente: [% pedido_dados.cliente.nome %]</h4><br/>
-<h4>Data de entrega: [% pedido_dados.data_entrega %]</h4><br/>
-<h4>Produtos:</h4><br/>
-<table id="pedidoProdutosTabela" class="table table-bordered table-striped tablesorter table-hover" summary="Lista de produtos do pedido.">
+<h4>Cliente: [% pedido_dados.cliente.nome %]</h4>
+<h4>Data de entrega: [% pedido_dados.data_entrega %]</h4>
+<h4>Produtos:</h4>
+<table border=1 class="queryTable">
   <thead>
     <tr>
       [% FOR coluna IN colunas %]

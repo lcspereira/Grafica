@@ -1,44 +1,56 @@
 [% USE String %]
 [% USE date %]
 [% USE date (format = '%d/%m/%Y') %]
-<div class="row-fluid">
+<div>
   <h3> Dados do cliente: </h3>
   <br/>
   <hr>
-  <div class="span8">
-    <p>
-     <b class="title">Nome:</b> [% cliente.nome %]
-    </p>
-    <p>
-     <b class="title">CPF/CNPJ:</b> [% cliente.cpf_cnpj %]
-    </p>
-    <p>
-     <b class="title">I.E.:</b> [% cliente.ie %]
-    </p>
-    <p>
-     <b class="title">Telefone:</b> [% cliente.telefone %]
-    </p>
-    <p>
-     <b class="title">E-mail:</b> [% cliente.email %]
-    </p>
-    <p>
-     <b class="title">Endereço:</b> [% cliente.endereco %], [% cliente.num_endereco %]
+  <div>
+  <table border=1 class="queryTable">
+    <tbody>
+      <tr>
+        <td><b>Nome:</b></td> 
+        <td>[% cliente.nome %]</td>
+      </tr>
+      <tr>
+        <td><b>CPF/CNPJ:</b></td> 
+        <td>[% cliente.cpf_cnpj %]</td>
+      </tr>
+      <tr>
+        <td><b>I.E.:</b></td> 
+        <td>[% cliente.ie %]</td>
+      </tr>
+      <tr>
+        <td><b>Telefone:</b></td> 
+        <td>[% cliente.telefone %]</td>
+      </tr>
+      <tr>
+        <td><b>E-mail:</b></td> 
+        <td>[% cliente.email %]</td>
+      </tr>
+      <tr>
+        <td><b>Endereço:</b></td>
+        <td>[% cliente.endereco %], [% cliente.num_endereco %]
         [% IF cliente.compl_endereco %]
             , [% cliente.compl_endereco %]
         [% END %]
         , [% cliente.bairro %], [% cliente.cidade %]
-    </p>
-    <p>
-     <b class="title">CEP:</b> [% cliente.cep %]
-    </p>
-    <p>
-     <b class="title">Cidade:</b> [% cliente.cidade %]
-    </p>
+        </td>
+      </tr>
+      <tr>
+        <td><b>CEP:</b></td> 
+        <td>[% cliente.cep %]</td>
+      </tr>
+      <tr>
+        <td><b>Cidade:</b></td> 
+        <td>[% cliente.cidade %]</td>
+      </tr>
+    </table>
     <br />
   </div>
   <b>Pedidos associados a este cliente:</b>
 
-  <table id="pedidosTabela" border='1'>
+  <table id="pedidosTabela" border='1' class="queryTable">
   <thead>
     <tr>
       [% FOR coluna IN colunas %]
@@ -63,6 +75,8 @@
     </tr>
     [% END %]
     <hr>
+  </tbody>
+</table>
 </div>
-
-
+<br/>
+<button onclick="window.print ()">Imprimir</button>

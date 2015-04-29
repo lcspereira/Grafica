@@ -10,7 +10,8 @@
 [% ELSIF c.flash.message.match ('sucesso.$') %]
     <div class="successMessage">[% c.flash.message %]</div>
 [% END %]
-
+[% form_busca.render %]
+<br/>
 <table border=1 class="queryTable">
   <thead>
     <tr>
@@ -31,8 +32,8 @@
       <td>[% pedido.status.descr %]</td>
       <td>            
         <div>
-            <button type="button"  onclick="window.open ('pedidos/detalhes/' + [% pedido.id %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
-              <button type="button" onclick="location.href = [% c.uri_for ('cancelar', pedido.id) %]">Cancelar</button>
+              <button type="button"  onclick="window.open ('[% c.uri_for ("detalhes", pedido.id) %]', 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
+              <button type="button" onclick="location.href = '[% c.uri_for ("cancelar", pedido.id) %]'">Cancelar</button>
         </div>
        </td>
     </tr>

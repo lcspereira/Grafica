@@ -19,7 +19,7 @@
             <td>[% cliente.nome %]</td>
             <td>[% cliente.endereco %], [% cliente.num_endereco %]
                 [% IF cliente.compl_endereco != '' %]
-                    ,[% cliente.compl_endereco %]
+                    , [% cliente.compl_endereco %]
                 [% END %]
                 , [% cliente.bairro %], [% cliente.cidade %]
             </td>
@@ -27,9 +27,9 @@
             <td>[% cliente.email %]</td>
             <td>
                 <div class="btn-group">
-                    <button onclick="window.open ('detalhes/' + [% cliente.id %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
-                    <button onclick="window.open ('editar/' + [% cliente.id %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Editar</button>
-                    <button onclick="location.href='excluir/' + [% cliente.id %]">Excluir</button>
+                    <button onclick="window.open ('[% c.uri_for ("detalhes", cliente.id) %]', 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
+                    <button onclick="window.open ('[% c.uri_for ("editar", cliente.id) %]', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Editar</button>
+                    <button onclick="location.href='[% c.uri_for ("excluir", cliente.id) %]'">Excluir</button>
                 </div>
             </td>
         </tr>
@@ -37,4 +37,4 @@
   </tbody>
 </table>
 <br/>
-<button onclick="window.open ('editar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Cadastrar cliente</button>
+<button onclick="window.open ('clientes/editar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Cadastrar cliente</button>

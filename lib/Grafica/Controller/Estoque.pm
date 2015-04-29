@@ -37,30 +37,49 @@ Alerta caso algum produto esteja com menos de 10 unidades no estoque.
 
 =cut
 
-sub index :Path :Args(0) {
+sub index :Path() :Args(0) {
     my ( $self, $c ) = @_;
     my @colunas      = ('Produto', 'Preço', 'Quantidade');
     my $params       = $c->req->params;
     my @produtos;
     my $where;
-    
-    #if ($params->{'descr'}) {
-    #  $where = {
-    #      descr
-      #}
-
-    @produtos                   = $c->model('DB::Produto')->search ({}, 
-        {
-          order_by => { -asc => 'quant' },
-        }
-    ); 
+    my $form_busca              = HTML::FormHandler->new ( 
+        widget_wrapper => "Table",
+        name           => "buscaProdutoForm",
+        field_list     => [
+            nome => { 
+                name  => "descrBuscar",
+                label => "Nome: ",
+                type  => "Text",
+            },
+            bSubmit => {
+                value => "Buscar",
+                type  => "Submit"
+            }
+        ]
+    );
+    if ($c->flash->{'descr_buscar'}) {
+        @produtos = $c->model('DB::Produto')->search({
+            descr => {
+                -ilike => "%" . $c->flash->{'descr_buscar'} . "%",
+            },
+        });
+        undef ($c->flash->{'descr_buscar'});
+    } else {
+        @produtos = $c->model('DB::Produto')->search ({}, {
+            order_by => { -asc => 'quant' },
+        });
+    }
 
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'produtos'}     = \@produtos;
     $c->stash->{'colunas'}      = \@colunas;
     $c->stash->{'template'}     = 'estoque/index.tt2';
     $c->stash->{'num_produtos'} = scalar (@produtos);
-
+    $c->stash->{'form_busca'}   = $form_busca;
+    return unless $form_busca->process (params => $params);
+    $c->flash->{'descr_buscar'} = $params->{'descrBuscar'};
+    $c->res->redirect ($c->uri_for ());
 }
 
 =head2 editar
@@ -108,13 +127,15 @@ Cadastra um novo produto no estoque.
 sub cadastrar :Local :Args(0) {
     my ( $self, $c ) = @_;
     my $produto      = $c->flash->{'produto'};
+    my $message;
+
     try {
         $produto->insert;
-        $c->flash->{'message'} = "Produto " . $produto->id . " cadastrado com sucesso.";
-        $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
+        $message = "Produto " . $produto->id . " cadastrado com sucesso.";
+        $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
-        $c->flash->{'message'} = "Erro ao cadastrar produto: " . $_;
-        $c->res->redirect ($c->uri_for ('editar'));
+        $message = "Erro ao cadastrar produto: $_";
+        $c->res->body ("<script>alert ('$message'); location.href='editar/'" . $produto->id . ");");
     };
 }
 
@@ -128,6 +149,8 @@ sub atualizar :Local :Args(0) {
     my ( $self, $c ) = @_;
     my $params       = $c->flash->{'form_params'};
     my $produto;
+    my $message;
+
     try {
         $produto = $c->model('DB::Produto')->find ($c->flash->{'produto'}->id);
         $produto->update ({
@@ -137,9 +160,13 @@ sub atualizar :Local :Args(0) {
         });
         $c->flash->{'message'} = "Produto " . $produto->id . " atualizado com sucesso.";
         $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
+        
+        
+        $message = "Produto " . $produto->id . " atualizado com sucesso.";
+        $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
-        $c->flash->{'message'} = "Erro ao atualizar produto: $_";
-        $c->res->redirect ($c->uri_for ('editar'));
+        $message = "Erro ao cadastrar produto: $_";
+        $c->res->body ("<script>alert ('$message'); location.href='editar/'" . $produto->id . ");");
     };
 }
 
@@ -153,13 +180,17 @@ Exclui determinado produto do estoque.
 
 sub excluir :Local :Args(1) {
     my ( $self, $c, $id_produto ) = @_;
+    my $message;
+
     try {
         $c->model('DB::Produto')->find ($id_produto)->delete;
-        $c->flash->{'message'} = "Produto " . $id_produto . " excluído com sucesso.";
+        $message = "Produto " . $id_produto . " excluído com sucesso.";
     } catch {
-        $c->flash->{'message'} = "Erro ao excluir produto: $_";
+        $message = "Erro ao excluir produto: $_";
     };
-    $c->res->redirect ($c->uri_for (''));
+    $message =~ s/\n/\ /g;
+    $message =~ s/'/\\'/g;
+    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for ("estoque") . "';</script>");
 }
 
 =head2 detalhes

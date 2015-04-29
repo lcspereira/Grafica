@@ -60,36 +60,38 @@ Exibe em tabela os pedidos em andamento.
 
 =cut
 
-sub index :Path :Args(0) {
+sub index :Path() :Args(0) {
     my ( $self, $c ) = @_;
     my @pedidos;
     my @colunas;
     my $where;
+    my $params       = $c->req->params;
+    my $form_busca   = HTML::FormHandler->new ( 
+        widget_wrapper => "Table",
+        name           => "buscaPedidoForm",
+        field_list     => [
+            nome => { 
+                name  => "numPedidoBuscar",
+                label => "Número: ",
+                type  => "Text",
+            },
+            bSubmit => {
+                value => "Buscar",
+                type  => "Submit"
+            }
+        ]
+    );
 
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'template'}     = 'pedidos/index.tt2';
     
-    if ($c->stash->{'data_pedido_inicial'}) {
-      if ($c->stash->{'data_pedido_final'}) {
-          $where->{'data_pedido'} = {
-              between => [$c->stash->{'data_pedido_inicial'}, $c->stash->{'data_pedido_final'}]
-          }
-      } else {
-          $where->{data_pedido} = {
-              between => [$c->stash->{'data_pedido_inicial'}, "current_date"]
-          }
-      }
+    if ($c->flash->{'num_pedido_buscar'}) {
+        $where->{'me.id'} = $c->flash->{'num_pedido_buscar'};
+    } else {
+        $where->{'status'} = {
+            in => [1, 3]
+        };
     }
-
-    if ($c->stash->{'nome_cliente'}) {
-      $where->nome = $c->stash->{'nome_cliente'};
-    }
-       
-    $where->{'status'} = {
-        in => [1, 3]
-    } if (! $c->stash->{'nome_cliente'} && ! $c->stash->{'data_pedido_inicial'});
-
-
 
     @pedidos                   = $c->model('DB::Pedido')->search($where, {
         join     => 'cliente',
@@ -100,6 +102,10 @@ sub index :Path :Args(0) {
     $c->stash->{'pedidos'}     = \@pedidos;
     $c->stash->{'colunas'}     = \@colunas;
     $c->stash->{'num_pedidos'} = scalar (@pedidos);
+    $c->stash->{'form_busca'}  = $form_busca;
+    return unless $form_busca->process (params => $params);
+    $c->flash->{'num_pedido_buscar'} = $params->{'numPedidoBuscar'};
+    $c->res->redirect ($c->uri_for ());
 }
 
 =head2 novo_pedido
@@ -253,6 +259,7 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
     my $pedido;
     my $pedido_produto;
     my $produto;
+    my $message;
 
     try {
         $c->model('DB')->txn_do (sub {
@@ -274,9 +281,11 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
                 }
             }
         });
-        $c->flash->{'message'} = "Pedido " . $pedido->id . " criado com sucesso.";
+        $message = "Pedido " . $pedido->id . " criado com sucesso.";        
+        $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
-        $c->flash->{'message'} = "Erro ao criar pedido: $_";
+        $message = "Erro ao criar pedido: $_";
+        $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     };
     $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
 }
@@ -286,18 +295,20 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
 =cut
 
 sub cancelar :Local Args(1) {
-    my ( $self, $c, $id_pedido ) = @_;
-    
+    my ( $self, $c, $id_pedido ) = @_; 
+    my $message;
+
     try {
         $c->model('DB::Pedido')->find({id => $id_pedido})->update ({
             status => 2,
         });
-        $c->flash->{'message'} = "Pedido $id_pedido cancelado com sucesso.";
-        $c->res->redirect ($c->uri_for (''));
+        $message = "Pedido $id_pedido cancelado com sucesso.";
     } catch {
-        $c->flash->{'message'} = "Erro ao cancelar pedido: $_";
-        $c->res->redirect ($c->uri_for (''));
+        $message = "Erro ao cancelar pedido: $_";
     };
+    $message =~ s/\n/\ /g;
+    $message =~ s/'/\\'/g;
+    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for ("pedidos") . "';</script>");
 }
 
 =head2 detalhes

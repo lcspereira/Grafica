@@ -1,13 +1,11 @@
-[% META title = 'Catalyst/Boostrap TT View' %]
-      <div class="row-fluid">
-        <div class="span9">
-          <div class="hero-unit">
-            <h1>Tecnicopias Grafica e Editora LTDA</h1>
-            <p>Para acessar o sistema, selecione um dos módulos abaixo:</p>
-            <p><a class="btn btn-primary btn-large" href="pedidos">Pedidos</a>
-            <a class="btn btn-primary btn-large" href="estoque">Estoque</a>
-            <a class="btn btn-primary btn-large" href="clientes">Clientes</a></p>
+[% META title = 'Tecnicopias Gráfica e Editora LTDA' %]
+<div>
+<h1>Tecnicopias Grafica e Editora LTDA</h1>
+<h3>Para acessar o sistema, selecione um dos módulos abaixo:</h3>
+<ul>
+  <li><a href="pedidos">Pedidos</a></li>
+  <li><a href="estoque">Estoque</a></li>
+  <li><a href="clientes">Clientes</a></li>
+</ul>
 
-          </div>
-        </div><!--/span-->
-      </div><!--/row-->
+</div>

@@ -2,12 +2,8 @@
   document.getElementById("estoqueTab").bgColor = "#828282";
 </script>
 <h3>Estoque&nbsp<small>([% num_produtos %])</h3>
-[% IF c.flash.message.match ('^Erro') %]
-    <div class="errorMessage">[% c.flash.message %]</div>
-[% ELSIF c.flash.message.match ('sucesso.$') %]
-    <div class="successMessage">[% c.flash.message %]</div>
-[% END %]
-
+[% form_busca.render %]
+<br/>
 <table border=1 class="queryTable">
   <thead>
     <tr>
@@ -29,9 +25,9 @@
             <td>[% produto.quant %]</td>           
             <td>
                 <div>
-                    <button onclick="window.open ('estoque/detalhes/' + [% produto.id %], 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
-                    <button onclick="window.open ('estoque/editar/' + [% produto.id %], 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Editar</button>
-                    <button onclick="location.href = \"[% c.uri_for ('excluir', produto.id) %]\"">Excluir</button>
+                    <button onclick="window.open ('[% c.uri_for ("detalhes", produto.id) %]', 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
+                    <button onclick="window.open ('[% c.uri_for ("editar", produto.id) %]', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Editar</button>
+                    <button onclick="location.href = '[% c.uri_for ("excluir", produto.id) %]'">Excluir</button>
                 </div>
             </td>
         </tr>

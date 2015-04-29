@@ -29,17 +29,7 @@ Controller para cadastro / edição de dados de clientes.
 
 =cut
 
-
 =head2 index
-
-=cut
-
-sub index :Path :Args() {
-    my ($self, $c) = @_;
-    $c->res->redirect ($c->uri_for ("main"));
-}
-
-=head2 main
 
 Primeira página do módulo de clientes.
 Lista os clientes cadastrados, e possui formulário
@@ -47,12 +37,11 @@ para consulta de clientes por nome.
 
 =cut
 
-sub main :Local :Args() {
+sub index :Path() :Args() {
     my ( $self, $c ) = @_;
     my @colunas;
     my @clientes;
     my $params                  = $c->req->params;
-  
     my $form_busca              = HTML::FormHandler->new ( 
         widget_wrapper => "Table",
         name           => "buscaClienteForm",
@@ -72,15 +61,14 @@ sub main :Local :Args() {
   
     $c->stash->{'current_view'} = 'TT';
     $c->stash->{'template'}     = 'clientes/index.tt2';
-    if ($c->stash->{'nome_buscar'}) {
-        print $c->stash->{'nome_buscar'} . "\n";
+    if ($c->flash->{'nome_buscar'}) {
         @clientes = $c->model('DB::Cliente')->search({
             nome => {
-                -ilike => "%" . $c->stash->{'nome_buscar'} . "%",
+                -ilike => "%" . $c->flash->{'nome_buscar'} . "%",
             },
         });
+        undef ($c->flash->{'nome_buscar'});
     } else {
-        print $c->stash->{'nome_buscar'} . "\n";
         @clientes = $c->model('DB::Cliente')->all;
     }
 
@@ -90,8 +78,8 @@ sub main :Local :Args() {
     $c->stash->{'num_clientes'} = scalar (@clientes);
     $c->stash->{'form_busca'}   = $form_busca;
     return unless $form_busca->process (params => $params);
-    $c->stash->{'nome_buscar'} = $params->{'nomeBuscar'};
-    $c->res->redirect ($c->uri_for ("main"));
+    $c->flash->{'nome_buscar'} = $params->{'nomeBuscar'};
+    $c->res->redirect ($c->uri_for ());
 }
 
 =head2 editar
@@ -152,11 +140,9 @@ sub cadastrar :Local Args(0){
     try {
         $cliente->insert;
         $message = "Cliente " . $cliente->id . " cadastrado com sucesso.";
-        #$message = s/"/'/;
         $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
         $message = "Erro ao inserir cliente: $_";
-        #$message = s/"/'/;
         $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     };
 }
@@ -191,11 +177,9 @@ sub atualizar :Local {
             cidade         => $params->{'cidade'}
         });
         $message = "Cliente " . $cliente->id . " atualizado com sucesso.";
-        #$message = s/"/'/;
         $c->res->body ("<script>alert ('$message'); window.opener.location.reload (true); window.close();</script>");
     } catch {
         $message = "Erro ao atualizar cliente: $_";
-        #$message = s/"/'/;
         $c->res->body ("<script>alert ('$message'); location.href='editar/'" . $cliente->id . ");");
     };
 }
@@ -223,7 +207,7 @@ sub excluir :Local :Args(1) {
     };
     $message =~ s/\n/\ /g;
     $message =~ s/'/\\'/g;
-    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for (qw ("clientes" "main")) . "';</script>");
+    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for ("clientes") . "';</script>");
 }
 
 

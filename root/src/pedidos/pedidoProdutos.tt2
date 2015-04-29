@@ -1,11 +1,7 @@
 [% USE format %]
 [% money = format('R$ %.2f') %]
-<div class="row-fluid">
-  <div class="page-header">
     <h3>Produtos:</h3>
-  </div>
-</div>
-<table id="pedidoProdutosTabela" class="table table-bordered table-striped tablesorter table-hover" summary="Lista de produtos do pedido.">
+<table border=1 class="">
   <thead>
     <tr>
       [% FOR coluna IN colunas %]
@@ -22,9 +18,7 @@
                 <td>[% produto.preco %]</td>
                 <td>[% produto.quantidade %]</td>
                 <td>
-                    <div class="btn-group">
-                        <a class="btn btn-mini" href="[% c.uri_for ('novoPedido', 'rem', produto.id) %]" rel="tooltip" title="Excluir"><span class="glyphicon glyphicon-trash"></span></a>
-                    </div>
+                    <button onclick="location.href = '[% c.uri_for ('novoPedido', 'rem', produto.id) %]'">Excluir</button>
                 </td>
             </tr>
         [% END %]
@@ -35,4 +29,4 @@
 <br/><h3>Subtotal: [% money(c.session.pedido_dados.subtotal) %]</h3><br/>
 
 [% form.render %]
-<center><a class="btn btn-primary btn-large" href="[% c.uri_for ('novoPedido', 'total') %]">Fechar pedido</a></center>
+<center><button onclick="location.href = '[% c.uri_for ('novoPedido', 'total') %]'">Fechar pedido</button></center>

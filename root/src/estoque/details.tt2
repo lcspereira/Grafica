@@ -2,14 +2,20 @@
   <h3> [% produto.descr %] </h3>
   <br/>
   <hr>
-  <div class="span8">
-    <p>
-     <b class="title">Preço:</b> R$ [% produto.preco %]
-    </p>
-    <p>
-     <b class="title">Quantidade:</b> [% produto.quant %]
-    </p>
+    <table border=1 class="queryTable">
+      <tbody>
+        <tr>
+          <td><b>Preço:</b></td> 
+          <td>R$ [% produto.preco %]</td>
+        </tr>
+        <tr>
+          <td><b>Quantidade:</b></td> 
+          <td>[% produto.quant %]</td>
+        </tr>
+      </tbody>
+    </table>
     <br />
-  </div>
 </div>
 <hr>
+<br/>
+<button onclick="window.print ()">Imprimir</button>
