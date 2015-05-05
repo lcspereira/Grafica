@@ -313,7 +313,11 @@ sub cancelar :Local Args(1) {
     };
     $message =~ s/\\n/\ /g;
     $message =~ s/'/\\'/g;
+<<<<<<< HEAD
     $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for ("") . "';</script>");
+=======
+    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for . "';</script>");
+>>>>>>> origin/master
 }
 
 =head2 detalhes

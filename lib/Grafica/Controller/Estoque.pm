@@ -190,7 +190,7 @@ sub excluir :Local :Args(1) {
     };
     $message =~ s/\n/\ /g;
     $message =~ s/'/\\'/g;
-    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for ("estoque") . "';</script>");
+    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for . "';</script>");
 }
 
 =head2 detalhes
