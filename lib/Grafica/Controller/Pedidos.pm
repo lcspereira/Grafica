@@ -282,12 +282,17 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
             }
         });
         $message = "Pedido " . $pedido->id . " criado com sucesso.";        
+        $message =~ s/\n/\ /g;
+        $message =~ s/'/\\'/g;
         $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
+        # TODO: Escapar caracteres.
         $message = "Erro ao criar pedido: $_";
-        $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
+        $message =~ s/\n/\ /g;
+        $message =~ s/'/\\'/g;
+        $c->log->debug ("Mensagem de erro: $message");
+        $c->res->body ("<script>alert ('" . $message . "');</script>");
     };
-    $c->res->body ("<script>window.opener.location.reload (true); window.close();</script>");
 }
 
 =head2 cancelar
@@ -306,9 +311,9 @@ sub cancelar :Local Args(1) {
     } catch {
         $message = "Erro ao cancelar pedido: $_";
     };
-    $message =~ s/\n/\ /g;
+    $message =~ s/\\n/\ /g;
     $message =~ s/'/\\'/g;
-    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for ("pedidos") . "';</script>");
+    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for ("") . "';</script>");
 }
 
 =head2 detalhes
