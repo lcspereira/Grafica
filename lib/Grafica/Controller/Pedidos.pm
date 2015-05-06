@@ -282,16 +282,12 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
             }
         });
         $message = "Pedido " . $pedido->id . " criado com sucesso.";        
-        $message =~ s/\n/\ /g;
-        $message =~ s/'/\\'/g;
         $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
-        # TODO: Escapar caracteres.
         $message = "Erro ao criar pedido: $_";
         $message =~ s/\n/\ /g;
         $message =~ s/'/\\'/g;
-        $c->log->debug ("Mensagem de erro: $message");
-        $c->res->body ("<script>alert ('" . $message . "');</script>");
+        $c->res->body ("<script>alert ('" . $message . "'); location.href = '" . $c->uri_for ("novo_pedido", "total") . "' </script>");
     };
 }
 
@@ -313,11 +309,7 @@ sub cancelar :Local Args(1) {
     };
     $message =~ s/\\n/\ /g;
     $message =~ s/'/\\'/g;
-<<<<<<< HEAD
-    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for ("") . "';</script>");
-=======
     $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for . "';</script>");
->>>>>>> origin/master
 }
 
 =head2 detalhes
