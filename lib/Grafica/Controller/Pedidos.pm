@@ -145,6 +145,8 @@ sub novo_pedido :Path('novoPedido') Args(0) {
 
 =head2 produtos_pedido
 
+Tela para adicionar produtos ao pedido.
+
 =cut
 
 sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
@@ -174,6 +176,8 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
 
 =head2 add_produto_pedido
 
+Adiciona determinado produto ao pedido em sessão.
+
 =cut
 
 sub add_produto_pedido :Path('novoPedido/add') Args(0) {
@@ -195,10 +199,12 @@ sub add_produto_pedido :Path('novoPedido/add') Args(0) {
 
 =head2 rem_produto_pedido
 
+Remove produto do pedido em sessão.
+
 =cut
 
 sub rem_produto_pedido :Path('novoPedido/rem') Args(1) {
-    my ($self, $c, $id_produto) = @_;    
+    my ($self, $c, $id_produto) = @_; 
     my @produtos_pedido         = @{$c->session->{'pedido_dados'}->{'produtos'}};
     my $produto;
 
@@ -214,6 +220,9 @@ sub rem_produto_pedido :Path('novoPedido/rem') Args(1) {
 
 
 =head2 total_pedido
+
+Tela de conclusão do pedido.
+Exibe o total do pedido, e permite desconto do total.
 
 =cut
 
@@ -251,6 +260,8 @@ sub total_pedido :Path('novoPedido/total') Args(0) {
 
 =head2 criar_pedido
 
+Efetiva o pedido no banco de dados.
+
 =cut
 
 sub criar_pedido :Path('novoPedido/create') Args(0) {
@@ -281,38 +292,47 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
                 }
             }
         });
-        $message = "Pedido " . $pedido->id . " criado com sucesso.";        
+        $message = "Pedido " . $pedido->id . " criado com sucesso.";
+        undef ($c->session->{'pedido_dados'});
         $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
         $message = "Erro ao criar pedido: $_";
         $message =~ s/\n/\ /g;
         $message =~ s/'/\\'/g;
-        $c->res->body ("<script>alert ('" . $message . "'); location.href = '" . $c->uri_for ("novo_pedido", "total") . "' </script>");
+        $c->res->body ("<script>alert ('" . $message . "'); location.href = '" . $c->uri_for ("novo_pedido", "total") . "'; </script>");
     };
 }
 
-=head2 cancelar
+=head2 alterar_status
+
+Muda o status do pedido.
 
 =cut
 
-sub cancelar :Local Args(1) {
-    my ( $self, $c, $id_pedido ) = @_; 
+sub alterar_status :Local Args(2) {
+    my ( $self, $c, $id_pedido, $status ) = @_; 
     my $message;
+    my $descr_status;
 
     try {
+        $descr_status = $c->model('DB::Status')->find({id => $status})->descr;
+        die ("Status não encontrado.") if ($descr_status eq "");
         $c->model('DB::Pedido')->find({id => $id_pedido})->update ({
-            status => 2,
+            status => $status,
         });
-        $message = "Pedido $id_pedido cancelado com sucesso.";
+        $message = "Status do pedido $id_pedido alterado para $descr_status.";
     } catch {
-        $message = "Erro ao cancelar pedido: $_";
+        $message = "Erro ao alterar status do pedido: $_";
     };
+
     $message =~ s/\\n/\ /g;
     $message =~ s/'/\\'/g;
-    $c->res->body ("<script>alert ('$message');location.href = '" . $c->uri_for . "';</script>");
+    $c->res->body ("<script>alert ('$message'); location.href = '" . $c->uri_for . "';</script>");
 }
 
 =head2 detalhes
+
+Tela de detalhes do pedido.
 
 =cut
 

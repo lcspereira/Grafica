@@ -5,11 +5,6 @@
   document.getElementById("pedidosTab").bgColor = "#828282";
 </script>
 <h3>Pedidos<small>([% num_pedidos %])</h3>
-[% IF c.flash.message.match ('^Erro') %]
-    <div class="errorMessage">[% c.flash.message %]</div>
-[% ELSIF c.flash.message.match ('sucesso.$') %]
-    <div class="successMessage">[% c.flash.message %]</div>
-[% END %]
 [% form_busca.render %]
 <br/>
 <table border=1 class="queryTable">
@@ -33,7 +28,15 @@
       <td>            
         <div>
               <button type="button"  onclick="window.open ('[% c.uri_for ("detalhes", pedido.id) %]', 'detalhesWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Detalhes</button>
-              <button type="button" onclick="location.href = '[% c.uri_for ("cancelar", pedido.id) %]'">Cancelar</button>
+              [% IF pedido.status.id == 1 || pedido.status.id == 3 %]
+                  <button type="button" onclick="location.href = '[% c.uri_for ("alterar_status", pedido.id, "2") %]'">Cancelar</button>
+              [% END %]
+              [% IF pedido.status.id == 1 %] 
+                  <button type="button" onclick="location.href = '[% c.uri_for ("alterar_status", pedido.id, "3") %]'">Aguardando Entrega</button>
+              [% END %]
+              [% IF pedido.status.id == 3 %] 
+                  <button type="button" onclick="location.href = '[% c.uri_for ("alterar_status", pedido.id, "4") %]'">Finalizar</button>
+              [% END %]
         </div>
        </td>
     </tr>
