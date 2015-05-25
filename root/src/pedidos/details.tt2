@@ -48,6 +48,7 @@
               <tr>
                   <td>[% produto.id_produto.descr %]</td>
                   <td>[% produto.quant %]</td>
+                  <td>[% produto.observacao %]</td>
               </tr>
           [% END %]
         </tbody>

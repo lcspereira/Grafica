@@ -38,8 +38,19 @@ function buscaCep (cep) {
 /******************************************/
 
 
+/*****************************************
+ * punctData
+ *****************************************
+ * Faz a pontuação da data.
+ *
+ * @param campoData: Campo do formulário
+ *                   Representando a data.
+ *****************************************/
+
 function punctData (campoData) {
     if (campoData.value.length == 2 || campoData.value.length == 5) {
         campoData.value += "/";
     }
 }
+
+/******************************************/

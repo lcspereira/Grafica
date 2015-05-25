@@ -17,6 +17,7 @@
                 <td>[% produto.descr %]</td>
                 <td>[% produto.preco %]</td>
                 <td>[% produto.quantidade %]</td>
+                <td>[% produto.observacao %]</td>
                 <td>
                     <button onclick="location.href = '[% c.uri_for ('novoPedido', 'rem', produto.id) %]'">Excluir</button>
                 </td>

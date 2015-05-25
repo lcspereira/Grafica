@@ -78,13 +78,13 @@ __PACKAGE__->table("cliente");
 =head2 endereco
 
   data_type: 'varchar'
-  is_nullable: 0
+  is_nullable: 1
   size: 100
 
 =head2 num_endereco
 
   data_type: 'integer'
-  is_nullable: 0
+  is_nullable: 1
 
 =head2 compl_endereco
 
@@ -98,17 +98,17 @@ __PACKAGE__->table("cliente");
   is_nullable: 1
   size: 9
 
-=head2 cidade
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 30
-
 =head2 bairro
 
   data_type: 'varchar'
   is_nullable: 1
   size: 50
+
+=head2 cidade
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 30
 
 =cut
 
@@ -131,17 +131,17 @@ __PACKAGE__->add_columns(
   "email",
   { data_type => "varchar", is_nullable => 1, size => 50 },
   "endereco",
-  { data_type => "varchar", is_nullable => 0, size => 100 },
+  { data_type => "varchar", is_nullable => 1, size => 100 },
   "num_endereco",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "compl_endereco",
   { data_type => "varchar", is_nullable => 1, size => 50 },
   "cep",
   { data_type => "varchar", is_nullable => 1, size => 9 },
-  "cidade",
-  { data_type => "varchar", is_nullable => 0, size => 30 },
   "bairro",
   { data_type => "varchar", is_nullable => 1, size => 50 },
+  "cidade",
+  { data_type => "varchar", is_nullable => 1, size => 30 },
 );
 
 =head1 PRIMARY KEY
@@ -174,8 +174,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07040 @ 2014-07-09 18:28:01
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:a/YIYDglKCG0IBjnut1fsA
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-05-24 23:53:57
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:pKst/+YNIVR1rNCbybv86g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

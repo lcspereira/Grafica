@@ -4,6 +4,7 @@ use Grafica::Form::Produto;
 use Try::Tiny;
 use Data::Printer;
 use namespace::autoclean;
+use Spreadsheet::XLSX;
 use utf8;
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -58,6 +59,7 @@ sub index :Path() :Args(0) {
             }
         ]
     );
+
     if ($c->flash->{'descr_buscar'}) {
         @produtos = $c->model('DB::Produto')->search({
             descr => {
@@ -208,6 +210,69 @@ sub detalhes :Local :Args(1) {
         produto      => $c->model("DB::Produto")->find ($id_cliente),
         template     => 'estoque/details.tt2',
     );
+}
+
+=head2 exportar
+
+Exporta planilha de estoque para o sistema
+
+=cut
+
+sub exportar :Local :Args(0) {
+    my ( $self, $c ) = @_;
+    my $excel;
+    my $worksheet;
+    my $upload;
+    my $linha;
+    my $cell;
+    my $form_export  = HTML::FormHandler->new ( 
+        widget_wrapper => "Table",
+        name           => "exportaPlanilhaForm",
+        field_list     => [
+            nome => { 
+                name    => "arqPlanilha",
+                label   => "Planilha: ",
+                type    => "Upload",
+                maxsize => "20000"
+            },
+            bSubmit => {
+                value => "Exportar",
+                type  => "Submit"
+            }
+        ]
+    );
+    my $produto;
+
+    $c->stash->{'form_export'} = $form_export;
+    return unless $form_export->process (params => $c->req->params);
+
+    #=====================================================================================
+    # Processamento da planilha
+    #=====================================================================================
+    $upload    = $c->req->upload ("arqPlanilha");
+    $excel     = Spreadsheet::XLSX->new ($upload->tempname);
+    $worksheet = $excel->{'worksheet'}[0];
+    foreach $linha (($worksheet->{'MinRow'} + 1)..$worksheet->{'MaxRow'}) {
+      #TODO: Mudar campo de busca para ID.
+        $produto = $c->model('DB::Produto')->search ({
+            descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
+        });
+        if ($produto) {
+            $produto->update (
+                descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
+                quant => $worksheet->{'Cells'}[$linha][2]->{'Val'},
+                preco => $worksheet->{'Cells'}[$linha][3]->{'Val'}, 
+            );
+        } else {
+            $produto = $c->model('DB::Produto')->new (
+                descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
+                quant => $worksheet->{'Cells'}[$linha][2]->{'Val'},
+                preco => $worksheet->{'Cells'}[$linha][3]->{'Val'},
+            );
+            $produto->insert;
+        }
+    }
+    #=====================================================================================
 }
 
 =encoding utf8

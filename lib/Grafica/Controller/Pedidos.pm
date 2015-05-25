@@ -166,7 +166,7 @@ sub produtos_pedido :Path('novoPedido/produtos') Args(0) {
         current_view => 'Popup',
         template     => 'pedidos/pedidoProdutos.tt2',
         form         => $form,
-        colunas      => [ 'Produto', 'Preço (R$)', 'Quantidade' ],
+        colunas      => [ 'Produto', 'Preço (R$)', 'Quantidade', 'Observação' ],
         produtos     => \@produtos,
     );
     return unless $form->validated;
@@ -191,6 +191,7 @@ sub add_produto_pedido :Path('novoPedido/add') Args(0) {
         descr      => $produto->descr,
         preco      => $produto->preco,
         quantidade => $params->{'quantidade'},
+        observacao => $params->{'observacao'},
     });
     $c->session->{'pedido_dados'}->{'produtos'}  = \@produtos_pedido;
     $c->session->{'pedido_dados'}->{'subtotal'} += $produto->preco * $params->{'quantidade'};
@@ -284,10 +285,11 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
             foreach $produto (@{$pedido_dados->{'produtos'}}) {
                 if ($produto) {
                     $pedido_produto = $c->model('DB::PedidoProduto')->create ({
-                    id_pedido     => $pedido->id,
-                    id_cliente    => $pedido_dados->{'cliente'}->{'id'},
-                    id_produto    => $produto->{'id'},
-                    quant         => $produto->{'quantidade'}
+                        id_pedido  => $pedido->id,
+                        id_cliente => $pedido_dados->{'cliente'}->{'id'},
+                        id_produto => $produto->{'id'},
+                        quant      => $produto->{'quantidade'},
+                        observacao => $produto->{'observacao'}
                   });
                 }
             }
@@ -346,7 +348,7 @@ sub detalhes :Local Args(1) {
     $c->stash->{'current_view'}  = 'Popup';
     $c->stash->{'pedido'}        = $pedido;
     $c->stash->{'template'}      = 'pedidos/details.tt2';
-    $c->stash->{'colunas'}       = [ 'Produto', 'Quantidade' ];
+    $c->stash->{'colunas'}       = [ 'Produto', 'Quantidade', 'Observação' ];
     $c->stash->{'produtos'}      = $pedido_produto;
 }
 

@@ -4,6 +4,7 @@
 
 package Grafica::Form::PedidoProdutos;
 use HTML::FormHandler::Moose;
+use utf8;
 extends 'HTML::FormHandler';
 
 use namespace::autoclean;
@@ -32,6 +33,10 @@ has_field 'quantidade' => (
     }, ]
 );
 
+has_field 'observacao' => (
+    label => 'Observação: ',
+    type  => 'TextArea',
+);
 
 has_field 'submit'       => ( 
     type          => 'Submit',

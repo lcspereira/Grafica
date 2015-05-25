@@ -16,7 +16,49 @@
     <script type=text/javascript>
         document.getElementById('cep').onblur = function () {
             buscaCep (document.getElementById('cep').value);
-        } 
+        }
+
+        // Adiciona pontuação ao CPF ou CNPJ, dependendo do número de caracteres.
+        document.getElementById("cpf_cnpj").onblur = function () {
+            var campoCpfCnpj = document.getElementById("cpf_cnpj");
+            var arrCampoCpfCnpj;
+            var punctCpfCnpj;
+            var i;
+
+            if (campoCpfCnpj.value.search (/[.-\/]/) == -1) {
+                arrCampoCpfCnpj = campoCpfCnpj.value.split ("");
+                punctCpfCnpj    = arrCampoCpfCnpj[0];
+                if (campoCpfCnpj.value.length == 11) {
+                    for (i = 1; i < campoCpfCnpj.value.length; i++) {
+                        punctCpfCnpj += arrCampoCpfCnpj[i];
+                        if (i == 2 || i == 5) {
+                            punctCpfCnpj += ".";
+                        } else if (i == 8) {
+                            punctCpfCnpj += "-";
+                        }
+                    }
+                } else if (campoCpfCnpj.value.length == 14) {
+                    for (i = 1; i < campoCpfCnpj.value.length; i++) {
+                        punctCpfCnpj += arrCampoCpfCnpj[i];
+                        if (i == 1 || i == 4) {
+                            punctCpfCnpj += ".";
+                        } else if (i == 7) {
+                            punctCpfCnpj += "/";
+                        } else if (i == 11) {
+                            punctCpfCnpj += "-";
+                        }
+                    }
+                }
+                document.getElementById("cpf_cnpj").value = punctCpfCnpj;
+            }
+        }
+
+        // Adiciona pontuação ao campo I.E.
+        document.getElementById("ie").onkeypress = function (e) {
+            if (e.which != 8 && document.getElementById("ie").value.length == 3) {
+                document.getElementById("ie").value += "/";
+            }
+        }
     </script>
 </div><!--/row-->
 
