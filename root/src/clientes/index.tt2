@@ -16,6 +16,7 @@
   <tbody>
     [% FOR cliente IN clientes %]
         <tr>
+            <td>[% cliente.id %]</td>
             <td>[% cliente.nome %]</td>
             <td>[% cliente.endereco %], [% cliente.num_endereco %]
                 [% IF cliente.compl_endereco != '' %]

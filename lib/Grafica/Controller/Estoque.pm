@@ -40,7 +40,7 @@ Alerta caso algum produto esteja com menos de 10 unidades no estoque.
 
 sub index :Path() :Args(0) {
     my ( $self, $c ) = @_;
-    my @colunas      = ('Produto', 'Preço', 'Quantidade');
+    my @colunas      = ('Código', 'Produto', 'Preço', 'Quantidade');
     my $params       = $c->req->params;
     my @produtos;
     my $where;

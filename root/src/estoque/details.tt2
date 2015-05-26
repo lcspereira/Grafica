@@ -1,5 +1,5 @@
 <div class="row-fluid">
-  <h3> [% produto.descr %] </h3>
+  <h3>[% produto.id %] - [% produto.descr %] </h3>
   <br/>
   <hr>
     <table border=1 class="queryTable">

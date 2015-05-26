@@ -2,7 +2,7 @@
 [% USE date %]
 [% USE date (format = '%d/%m/%Y') %]
 <div>
-  <h3> Dados do cliente: </h3>
+  <h3> Dados do cliente: Código [% cliente.id %]</h3>
   <br/>
   <hr>
   <div>

@@ -20,6 +20,7 @@
         [% ELSE %]
           <tr>
         [% END %]
+            <td>[% produto.id %]</td>
             <td>[% produto.descr %]</td>
             <td>[% produto.preco %]</td>
             <td>[% produto.quant %]</td>           
