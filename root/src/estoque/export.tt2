@@ -1,0 +1,15 @@
+<div class="row-fluid">
+    <h3>Exportar planilha</h3>
+</div>
+<hr/>
+<div>
+    A planilha a ser exportada deve conter as seguintes colunas, nesta ordem:<br/>
+    Código, descrição, preço, quantidade<br/>
+    A planilha deve estar em formato XLSX, e é permitida a exportação de planilhas com até 20 MB.
+</div>
+<hr/>
+<br/>
+<br/>
+    [% form.render %]
+</div><!--/row-->
+

@@ -37,4 +37,5 @@
 </table>
 <br/>
 <button onclick="window.open ('estoque/editar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Cadastrar produto</button>
+<button onclick="window.open ('estoque/exportar', 'editarWindow', 'resizable=no, scrollbars=yes, titlebar=no, width=500, height=550, top=10, left=10')">Exportar planilha</button>
 </div>

@@ -242,35 +242,46 @@ sub exportar :Local :Args(0) {
         ]
     );
     my $produto;
+    my $message;
 
-    $c->stash->{'form_export'} = $form_export;
+    $c->stash->{'form'}         = $form_export;
+    $c->stash->{'current_view'} = "Popup";
+    $c->stash->{'template'}     = "estoque/export.tt2";
     return unless $form_export->process (params => $c->req->params);
 
     #=====================================================================================
     # Processamento da planilha
     #=====================================================================================
-    $upload    = $c->req->upload ("arqPlanilha");
-    $excel     = Spreadsheet::XLSX->new ($upload->tempname);
-    $worksheet = $excel->{'worksheet'}[0];
-    foreach $linha (($worksheet->{'MinRow'} + 1)..$worksheet->{'MaxRow'}) {
-      #TODO: Mudar campo de busca para ID.
-        $produto = $c->model('DB::Produto')->search ({
-            descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
-        });
-        if ($produto) {
-            $produto->update (
-                descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
-                quant => $worksheet->{'Cells'}[$linha][2]->{'Val'},
-                preco => $worksheet->{'Cells'}[$linha][3]->{'Val'}, 
-            );
-        } else {
-            $produto = $c->model('DB::Produto')->new (
-                descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
-                quant => $worksheet->{'Cells'}[$linha][2]->{'Val'},
-                preco => $worksheet->{'Cells'}[$linha][3]->{'Val'},
-            );
-            $produto->insert;
+    try {
+        $upload    = $c->req->upload ("arqPlanilha");
+        die ("Formato de planilha inválido.") if ($upload->tempname !~ /.xlsx$/i);
+        $excel     = Spreadsheet::XLSX->new ($upload->tempname);
+        $worksheet = $excel->{'worksheet'}[0];
+        die ("Estrutura de planilha inválida.") if ($worksheet->{'MaxCol'} != 4);
+
+        foreach $linha (($worksheet->{'MinRow'} + 1)..$worksheet->{'MaxRow'}) {
+            $produto = $c->model('DB::Produto')->search ({
+                descr => $worksheet->{'Cells'}[$linha][0]->{'Val'},
+            });
+            if ($produto) {
+                $produto->update (
+                    descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
+                    quant => $worksheet->{'Cells'}[$linha][2]->{'Val'},
+                    preco => $worksheet->{'Cells'}[$linha][3]->{'Val'}, 
+                );
+            } else {
+                $produto = $c->model('DB::Produto')->new (
+                    descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
+                    quant => $worksheet->{'Cells'}[$linha][2]->{'Val'},
+                    preco => $worksheet->{'Cells'}[$linha][3]->{'Val'},
+                );
+                $produto->insert;
+            }
         }
+        $c->res->body ("<script>alert ('Planilha exportada com sucesso.'); window.opener.location.reload (true); window.close();</script>");
+    } catch { 
+        $message = "Erro ao exportar planilha: $_";
+        $c->res->body ("<script>alert ('$message'); location.href='exportar/');");
     }
     #=====================================================================================
 }
