@@ -230,10 +230,11 @@ sub exportar :Local :Args(0) {
         name           => "exportaPlanilhaForm",
         field_list     => [
             nome => { 
-                name    => "arqPlanilha",
-                label   => "Planilha: ",
-                type    => "Upload",
-                maxsize => "20000"
+                name     => "arqPlanilha",
+                label    => "Planilha: ",
+                type     => "Upload",
+                maxsize  => "20000",
+                required => 1,
             },
             bSubmit => {
                 value => "Exportar",
@@ -247,13 +248,17 @@ sub exportar :Local :Args(0) {
     $c->stash->{'form'}         = $form_export;
     $c->stash->{'current_view'} = "Popup";
     $c->stash->{'template'}     = "estoque/export.tt2";
-    return unless $form_export->process (params => $c->req->params);
+    if ($c->req->method eq "POST") {
+        $c->req->params->{arqPlanilha} = $c->req->upload ('arqPlanilha');
+        $form_export->process (params => $c->req->params);
 
+    }
+    return unless ($form_export->validated);
     #=====================================================================================
     # Processamento da planilha
     #=====================================================================================
     try {
-        $upload    = $c->req->upload ("arqPlanilha");
+        $upload = $c->req->params->{arqPlanilha};
         die ("Formato de planilha inválido.") if ($upload->tempname !~ /.xlsx$/i);
         $excel     = Spreadsheet::XLSX->new ($upload->tempname);
         $worksheet = $excel->{'worksheet'}[0];
