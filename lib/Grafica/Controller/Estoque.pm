@@ -228,6 +228,7 @@ sub exportar :Local :Args(0) {
     my $form_export  = HTML::FormHandler->new ( 
         widget_wrapper => "Table",
         name           => "exportaPlanilhaForm",
+        enctype        => "multipart/form-data",
         field_list     => [
             nome => { 
                 name     => "arqPlanilha",
@@ -251,7 +252,6 @@ sub exportar :Local :Args(0) {
     if ($c->req->method eq "POST") {
         $c->req->params->{arqPlanilha} = $c->req->upload ('arqPlanilha');
         $form_export->process (params => $c->req->params);
-
     }
     return unless ($form_export->validated);
     #=====================================================================================
@@ -261,32 +261,31 @@ sub exportar :Local :Args(0) {
         $upload = $c->req->params->{arqPlanilha};
         die ("Formato de planilha inválido.") if ($upload->tempname !~ /.xlsx$/i);
         $excel     = Spreadsheet::XLSX->new ($upload->tempname);
-        $worksheet = $excel->{'worksheet'}[0];
-        die ("Estrutura de planilha inválida.") if ($worksheet->{'MaxCol'} != 4);
+        $worksheet = $excel->{'Worksheet'}[0];
+        die ("Estrutura de planilha inválida.") if ($worksheet->{'MaxCol'} != 1);
 
-        foreach $linha (($worksheet->{'MinRow'} + 1)..$worksheet->{'MaxRow'}) {
-            $produto = $c->model('DB::Produto')->search ({
-                descr => $worksheet->{'Cells'}[$linha][0]->{'Val'},
-            });
+        foreach $linha ($worksheet->{'MinRow'}..$worksheet->{'MaxRow'}) {
+            $produto = $c->model('DB::Produto')->find ($worksheet->{'Cells'}[$linha][0]->{'Val'});
             if ($produto) {
-                $produto->update (
+                $produto->update ({
                     descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
-                    quant => $worksheet->{'Cells'}[$linha][2]->{'Val'},
-                    preco => $worksheet->{'Cells'}[$linha][3]->{'Val'}, 
-                );
+                    preco => $worksheet->{'Cells'}[$linha][2]->{'Val'},
+                    quant => $worksheet->{'Cells'}[$linha][3]->{'Val'}, 
+                });
             } else {
-                $produto = $c->model('DB::Produto')->new (
+                $produto = $c->model('DB::Produto')->new ({
                     descr => $worksheet->{'Cells'}[$linha][1]->{'Val'},
-                    quant => $worksheet->{'Cells'}[$linha][2]->{'Val'},
-                    preco => $worksheet->{'Cells'}[$linha][3]->{'Val'},
-                );
+                    preco => $worksheet->{'Cells'}[$linha][2]->{'Val'},
+                    quant => $worksheet->{'Cells'}[$linha][3]->{'Val'},
+                });
                 $produto->insert;
             }
         }
         $c->res->body ("<script>alert ('Planilha exportada com sucesso.'); window.opener.location.reload (true); window.close();</script>");
     } catch { 
         $message = "Erro ao exportar planilha: $_";
-        $c->res->body ("<script>alert ('$message'); location.href='exportar/');");
+        $message =~ s/\n/\ /g;
+        $c->res->body ("<script>alert ('$message'); location.href=\"./exportar\";</script>");
     }
     #=====================================================================================
 }
