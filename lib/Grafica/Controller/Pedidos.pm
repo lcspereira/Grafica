@@ -120,6 +120,7 @@ sub novo_pedido :Path('novoPedido') Args(0) {
     my $pedido       = $c->model('DB::Pedido')->new({});
     my $form;
 
+
     $form = $self->pedido_form->run (
         params    => $params,
         name      => 'formPedido',
@@ -237,13 +238,14 @@ sub total_pedido :Path('novoPedido/total') Args(0) {
         name              => 'formPedidoTotal',
         item              => $pedido,
         no_update         => 1,
-        update_field_list => {
-            subtotal => {
-                default => sprintf ("%.2f", $pedido_dados->{'subtotal'}),
-            },
-        },
+        # FIXME: Valor do subtotal fica preso, apenas sendo zerado ao reiniciar o servidor.
+        #update_field_list => {
+        #    subtotal => {
+        #        default => sprintf ("%.2f", $pedido_dados->{'subtotal'}),
+        #    },
+        #},
     );
-    
+    #$form->form->fields->[0]->value (sprintf ("%.2f", $pedido_dados->{'subtotal'}));
 
     $c->stash (
         current_view => 'Popup',
@@ -295,7 +297,6 @@ sub criar_pedido :Path('novoPedido/create') Args(0) {
             }
         });
         $message = "Pedido " . $pedido->id . " criado com sucesso.";
-        undef ($c->session->{'pedido_dados'});
         $c->res->body ("<script>alert ('" . $message . "'); window.opener.location.reload (true); window.close();</script>");
     } catch {
         $message = "Erro ao criar pedido: $_";

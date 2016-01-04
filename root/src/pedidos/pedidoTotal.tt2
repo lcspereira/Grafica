@@ -31,6 +31,8 @@
 <br/>
 [% form.render %]
 <script type='text/javascript'>
+    var subtotal                               = [% pedido_dados.subtotal %];
+    document.getElementById('subtotal').value  = subtotal.toFixed (2);
     document.getElementById('desconto').onblur = function () {
         // Calcula o total do pedido, e seta o campo total.
         var total                              = document.getElementById('subtotal').value - document.getElementById('desconto').value;
